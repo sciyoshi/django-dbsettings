@@ -1,0 +1,60 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_modify %}
+
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/forms.css{% endblock %}
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block userlinks %}<a href="../doc/">{% trans 'Documentation' %}</a> / <a href="../password_change/">{% trans 'Change password' %}</a> / <a href="../logout/">{% trans 'Log out' %}</a>{% endblock %}
+{% block breadcrumbs %}{% if not is_popup %}
+<div class="breadcrumbs">
+     <a href="../">{% trans "Home" %}</a> &rsaquo;
+     {% trans "Edit Values" %}
+</div>
+{% endif %}{% endblock %}
+{% block content %}
+<div id="content-main">
+{% if form.errors %}
+    <p class="errornote">
+    {% blocktrans count form.errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </p>
+{% endif %}
+{% if form.fields %}
+{% regroup form by app_label as apps %}
+<form method="post">
+	{% for app in apps %}
+		<div class="module">
+        <table summary="{% blocktrans with app.grouper|capfirst as name %}Models available in the {{ name }} application.{% endblocktrans %}" width="100%">
+        <caption>{% blocktrans with app.grouper|capfirst as name %}{{ name }}{% endblocktrans %}</caption>
+		{% regroup app.list by model_name as models %}
+		{% for model in models %}
+			<tr class="alt">
+				<th>{% blocktrans with model.grouper|capfirst as name %}{{ name }}{% endblocktrans %}</th>
+				<th>&nbsp;</th>
+			</tr>
+			{% for field in model.list %}
+				{% if field.errors %}
+				<tr class="error">
+					<td colspan="2">{{ field.errors }}</td>
+				</tr>
+				{% endif %}
+				<tr{% if field.errors %} class="error"{% endif %}>
+					<td>
+						{{ field.label_tag }}
+						{% if field.help_text %}
+							<p class="help">{{ field.help_text|escape }}</p>
+						{% endif %}
+					</td>
+					<td>{{ field }}</td>
+				</tr>
+			{% endfor %}
+		{% endfor %}
+		</table>
+		</div>
+	{% endfor %}
+<input type="submit" value="Save" class="default" />
+</form>
+{% else %}
+    <p>{% trans "You don't have permission to edit values." %}</p>
+{% endif %}
+</div>
+{% endblock %}
