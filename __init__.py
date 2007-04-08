@@ -2,7 +2,7 @@ import re, datetime
 from bisect import bisect
 
 from django.utils.functional import curry
-from vgmix3 import newforms as forms
+from django import newforms as forms
 
 import models
 
@@ -76,7 +76,9 @@ class Value(object):
             # Add a permission for the value editor
             try:
                 cls._meta.permissions.append(permission)
+                print 'yep'
             except AttributeError:
+                print 'blah'
                 # Permissions were supplied as a tuple, so preserve that
                 cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
 
