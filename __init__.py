@@ -76,9 +76,7 @@ class Value(object):
             # Add a permission for the value editor
             try:
                 cls._meta.permissions.append(permission)
-                print 'yep'
             except AttributeError:
-                print 'blah'
                 # Permissions were supplied as a tuple, so preserve that
                 cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
 
