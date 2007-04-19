@@ -3,11 +3,14 @@ from bisect import bisect
 
 from django.utils.functional import curry
 from django import newforms as forms
+from django.db import transaction
 
 import models
 
 _values, _values_by_model = {}, {}
 
+# A transaction is necessary for backends like PostgreSQL
+transaction.enter_transaction_management()
 try:
     # Retrieve all stored values once during startup
     for value in models.Value.objects.all():
@@ -15,7 +18,8 @@ try:
 except:
     # Necessary in case values were used in models
     # prior to syncdb setting up the value storage
-    pass
+    transaction.rollback()
+transaction.leave_transaction_management()
 
 def get_value(app_label, model_name, name):
     return _values[app_label, model_name, name].content
