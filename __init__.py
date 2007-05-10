@@ -55,7 +55,6 @@ class OptionsBase(type):
                 raise TypeError('The type of %s (%s) is not a valid Value.' % (attribute_name, attr.__class__.__name__))
             cls.add_to_class(attribute_name, attr)
 
-# FIXME: Add in the rest of the options
 class Options(object):
     __metaclass__ = OptionsBase
 
@@ -172,7 +171,7 @@ class Value(object):
 
     def contribute_to_class(self, cls, attribute_name):
         if not issubclass(cls, Options):
-            pass#return
+            return
         self.module_name = cls.__module__
         self.class_name = ''
         self.attribute_name = attribute_name
