@@ -19,19 +19,21 @@
     </p>
 {% endif %}
 {% if form.fields %}
-{% regroup form by app_label as apps %}
+{% regroup form by module_name as modules %}
 <form method="post">
-	{% for app in apps %}
+	{% for module in modules %}
 		<div class="module">
-        <table summary="{% blocktrans with app.grouper|capfirst as name %}Models available in the {{ name }} application.{% endblocktrans %}" width="100%">
-        <caption>{% blocktrans with app.grouper|capfirst as name %}{{ name }}{% endblocktrans %}</caption>
-		{% regroup app.list by model_name as models %}
-		{% for model in models %}
-			<tr class="alt">
-				<th>{% blocktrans with model.grouper|capfirst as name %}{{ name }}{% endblocktrans %}</th>
-				<th>&nbsp;</th>
-			</tr>
-			{% for field in model.list %}
+        <table summary="{% blocktrans with app.grouper as name %}Models available in the {{ name }} application.{% endblocktrans %}" width="100%">
+        <caption>{% blocktrans with module.grouper as name %}{{ name }}{% endblocktrans %}</caption>
+		{% regroup module.list by class_name as classes %}
+		{% for class in classes %}
+			{% if class.grouper %}
+				<tr class="alt">
+					<th>{% blocktrans with class.grouper as name %}{{ name }}{% endblocktrans %}</th>
+					<th>&nbsp;</th>
+				</tr>
+			{% endif %}
+			{% for field in class.list %}
 				{% if field.errors %}
 				<tr class="error">
 					<td colspan="2">{{ field.errors }}</td>

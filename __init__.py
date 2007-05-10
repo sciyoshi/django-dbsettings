@@ -1,4 +1,4 @@
-import re, datetime
+import datetime, re, sys
 from bisect import bisect
 
 from django.utils.functional import curry
@@ -7,33 +7,34 @@ from django.db import transaction
 
 import models
 
-_values, _values_by_model = {}, {}
+_values = {}
+_value_list = []
 
 # A transaction is necessary for backends like PostgreSQL
 transaction.enter_transaction_management()
 try:
     # Retrieve all stored values once during startup
     for value in models.Value.objects.all():
-        _values[value.app_label, value.model, value.name] = value
+        _values[value.module_name, value.class_name, value.attribute_name] = value
 except:
     # Necessary in case values were used in models
     # prior to syncdb setting up the value storage
     transaction.rollback()
 transaction.leave_transaction_management()
 
-def get_value(app_label, model_name, name):
-    return _values[app_label, model_name, name].content
+def get_value(module_name, class_name, attribute_name):
+    return _values[module_name, class_name, attribute_name].content
 
-def get_descriptor(app_label, model_name, name):
-    return _values[app_label, model_name, name].descriptor
+def get_descriptor(module_name, class_name, attribute_name):
+    return _values[module_name, class_name, attribute_name].descriptor
 
-def set_value(app_label, model_name, name, value):
-    model = _values.get((app_label, model_name, name), None)
+def set_value(module_name, class_name, attribute_name, value):
+    model = _values.get((module_name, class_name, attribute_name), None)
     if model is None:
-        _values[app_label, model_name, name] = model = models.Value(
-            app_label=app_label,
-            model=model_name,
-            name=name,
+        _values[module_name, class_name, attribute_name] = model = models.Value(
+            module_name=module_name,
+            class_name=class_name,
+            attribute_name=attribute_name,
         )
     try:
         model.content = model.descriptor.get_db_prep_save(value)
@@ -41,8 +42,110 @@ def set_value(app_label, model_name, name, value):
         model.content = str(value)
     model.save()
 
-def get_values_by_model(app_label, model):
-    return _values_by_model[app_label, model]
+def get_all_values():
+    return _value_list
+
+class OptionsBase(type):
+    def __init__(cls, name, bases, attrs):
+        if not bases or bases == (object,):
+            return
+        attrs.pop('__module__', None)
+        for attribute_name, attr in attrs.items():
+            if not isinstance(attr, Value):
+                raise TypeError('The type of %s (%s) is not a valid Value.' % (attribute_name, attr.__class__.__name__))
+            cls.add_to_class(attribute_name, attr)
+
+# FIXME: Add in the rest of the options
+class Options(object):
+    __metaclass__ = OptionsBase
+
+    def __new__(cls):
+        attrs = [(k, v.copy()) for (k, v) in cls.__dict__.items() if isinstance(v, Value)]
+        attrs.sort(lambda a, b: cmp(a[1], b[1]))
+
+        for key, attr in attrs:
+            attr.creation_counter = Value.creation_counter
+            Value.creation_counter += 1
+            if attr.key not in _values:
+                # This value isn't already stored in the database
+                _values[attr.key] = models.Value(
+                    module_name=attr.module_name,
+                    class_name=attr.class_name,
+                    attribute_name=attr.attribute_name,
+                )
+
+            # Set up cache storage for external access
+            _values[attr.key].descriptor = attr
+            _value_list.insert(bisect(_value_list, attr), attr)
+
+        # Make sure the module reflects where it was executed
+        attrs += (('__module__', sys._getframe(1).f_globals['__name__']),)
+
+        # A new class is created so descriptors work properly
+        # object.__new__ is necessary here to avoid recursion
+        return object.__new__(type('Options', (cls,), dict(attrs)))
+
+    def contribute_to_class(self, cls, name):
+        # Override the class_name of all registered values
+        for attr in self.__class__.__dict__.values():
+            if isinstance(attr, Value):
+                attr.module_name = cls.__module__
+                attr.class_name = cls.__name__
+
+                if attr.key not in _values:
+                    # This value isn't already stored in the database
+                    _values[attr.key] = models.Value(
+                        module_name=attr.module_name,
+                        class_name=attr.class_name,
+                        attribute_name=attr.attribute_name,
+                    )
+
+                # Set up cache storage for external access
+                _values[attr.key].descriptor = attr
+
+        # Create permission for editing values on the model
+        permission = (
+            'can_edit_%s_values' % cls.__name__.lower(),
+            'Can edit %s values' % cls._meta.verbose_name,
+        )
+        if permission not in cls._meta.permissions:
+            # Add a permission for the value editor
+            try:
+                cls._meta.permissions.append(permission)
+            except AttributeError:
+                # Permissions were supplied as a tuple, so preserve that
+                cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
+
+        # Finally, plaec the attribute on the class
+        setattr(cls, name, self)
+
+    def add_to_class(cls, attribute_name, value):
+        value.contribute_to_class(cls, attribute_name)
+    add_to_class = classmethod(add_to_class)
+
+    def __add__(self, other):
+        if not isinstance(other, Options):
+            raise NotImplementedError('Options may only be added to other options.')
+
+        options = type('Options', (Options,), {'__module__': sys._getframe(1).f_globals['__name__']})()
+
+        for attribute_name, attr in self.__class__.__dict__.items():
+            if isinstance(attr, Value):
+                options.__class__.add_to_class(attribute_name, attr)
+        for attribute_name, attr in other.__class__.__dict__.items():
+            if isinstance(attr, Value):
+                options.__class__.add_to_class(attribute_name, attr)
+        return options
+
+    @classmethod
+    def __iter__(cls):
+        attrs = [v for v in cls.__dict__.values() if isinstance(v, Value)]
+        attrs.sort(lambda a, b: cmp(a[1], b[1]))
+        for attr in attrs:
+            yield attr
+        return
+        attrs = [(v.attribute_name, v.copy()) for v in cls if isinstance(v, Value)]
+        attrs.sort()
 
 class Value(object):
 
@@ -58,44 +161,28 @@ class Value(object):
         # This is needed because bisect does not take a comparison function.
         return cmp(self.creation_counter, other.creation_counter)
 
-    def contribute_to_class(self, cls, name):
-        self.app_label = cls._meta.app_label
-        self.model = cls.__name__.lower()
-        self.name = name
-        self.description = self.description or name.replace('_', ' ')
-        self.key = (self.app_label, self.model, self.name)
-        if self.key not in _values:
-            # This value isn't already stored in the database
-            _values[self.key] = models.Value(
-                app_label=self.app_label,
-                model=self.model,
-                name=self.name,
-            )
+    def copy(self):
+        new_value = self.__class__(self.description, self.help_text)
+        new_value.__dict__ = self.__dict__.copy()
+        return new_value
 
-        permission = (
-            'can_edit_%s_values' % cls._meta.verbose_name,
-            'Can edit %s values' % cls._meta.verbose_name,
-        )
-        if permission not in cls._meta.permissions:
-            # Add a permission for the value editor
-            try:
-                cls._meta.permissions.append(permission)
-            except AttributeError:
-                # Permissions were supplied as a tuple, so preserve that
-                cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
+    def key(self):
+        return self.module_name, self.class_name, self.attribute_name
+    key = property(key)
 
-        # Set up cache storage for external access
-        _values[self.key].descriptor = self
-        if (self.app_label, self.model) not in _values_by_model:
-            _values_by_model[self.app_label, self.model] = []
-        by_model_list = _values_by_model[self.app_label, self.model]
-        by_model_list.insert(bisect(by_model_list, self), self)
+    def contribute_to_class(self, cls, attribute_name):
+        if not issubclass(cls, Options):
+            pass#return
+        self.module_name = cls.__module__
+        self.class_name = ''
+        self.attribute_name = attribute_name
+        self.description = self.description or attribute_name.replace('_', ' ')
 
-        setattr(cls, self.name, self)
+        setattr(cls, self.attribute_name, self)
 
     def __get__(self, instance=None, type=None):
-        if instance != None:
-            raise AttributeError, "%s isn't accessible via %s instances" % (self.name, type.__name__)
+        if instance == None:
+            raise AttributeError, "%s is only accessible from %s instances." % (self.attribute_name, type.__name__)
         value = _values.get(self.key, None)
         if value:
             return self.to_python(value.content)
