@@ -77,6 +77,8 @@ class BooleanValue(Value):
             return True
         return False
 
+    to_editor = to_python
+
 # DurationValue has a lot of duplication and ugliness because of issue #2443
 # Until DurationField is sorted out, this has to do some extra work
 class DurationValue(Value):
