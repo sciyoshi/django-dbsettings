@@ -20,7 +20,7 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
         form = editor(request.POST.copy())
         if form.is_valid():
             form.full_clean()
-            for name, value in form.clean_data.items():
+            for name, value in form.cleaned_data.items():
                 key = forms.re_field_name.match(name).groups()
                 setting = loading.get_setting(*key)
                 try:

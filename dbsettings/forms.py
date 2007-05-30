@@ -1,21 +1,11 @@
 import re
 
 from django.db.models import get_model
-#FIXME: from django import newforms as forms
-from vgmix3 import newforms as forms
+from django import newforms as forms
 from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
 
 re_field_name = re.compile(r'^(.+)__(.*)__(.+)$')
-
-#FIXME: Remove once working on a recent SVN
-class SortedDict(SortedDict):
-    def copy(self):
-        "Returns a copy of this object."
-        # This way of initializing the copy means it works for subclasses, too.
-        obj = self.__class__(self)
-        obj.keyOrder = self.keyOrder
-        return obj
 
 class SettingsEditor(forms.BaseForm):
     "Base editor, from which customized forms are created"

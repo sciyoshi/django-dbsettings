@@ -1,6 +1,6 @@
 import datetime
 
-from vgmix3 import newforms as forms
+from django import newforms as forms
 
 __all__ = ['Value', 'BooleanValue', 'DurationValue', 'IntegerValue',
     'PercentValue', 'PositiveIntegerValue', 'StringValue']
@@ -80,7 +80,15 @@ class BooleanValue(Value):
 # DurationValue has a lot of duplication and ugliness because of issue #2443
 # Until DurationField is sorted out, this has to do some extra work
 class DurationValue(Value):
-    field = forms.SplitDurationField
+
+    class field(forms.CharField):
+        def clean(self, value):
+            try:
+                return datetime.timedelta(seconds=float(value))
+            except (ValueError, TypeError):
+                raise forms.ValidationError('This value must be a real number.')
+            except OverflowError:
+                raise forms.ValidationError('The maximum allowed value is %s' % datetime.timedelta.max)
 
     def to_python(self, value):
         if isinstance(value, datetime.timedelta):
@@ -94,10 +102,6 @@ class DurationValue(Value):
 
     def get_db_prep_save(self, value):
         return str(value.days * 24 * 3600 + value.seconds + float(value.microseconds) / 1000000)
-
-    def to_editor(self, value):
-        if value is not None and value is not '':
-            return self.to_python(value)
 
 class IntegerValue(Value):
     field = forms.IntegerField
