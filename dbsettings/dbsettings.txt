@@ -126,6 +126,11 @@ or within any standard Django model.
 
         limits = ImageLimits()
 
+Multiple groups may be assigned to the same module or model, and they can even
+be combined into a single group by using standard addition syntax::
+
+    options = EmailOptions() + ImageLimits()
+
 Database setup
 --------------
 
