@@ -1,0 +1,54 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_modify %}
+
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/forms.css{% endblock %}
+{% block coltype %}colMS{% endblock %}
+{% block bodyclass %}dashboard{% endblock %}
+{% block userlinks %}<a href="/admin/doc/">{% trans 'Documentation' %}</a> / <a href="/admin/password_change/">{% trans 'Change password' %}</a> / <a href="/admin/logout/">{% trans 'Log out' %}</a>{% endblock %}
+{% block breadcrumbs %}{% if not is_popup %}
+<div class="breadcrumbs">
+     <a href="/admin/">{% trans "Home" %}</a> &rsaquo;
+     {% trans "Edit Settings" %}
+</div>
+{% endif %}{% endblock %}
+{% block content %}
+<div id="content-main">
+{% if form.errors %}
+    <p class="errornote">
+    {% blocktrans count form.errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+    </p>
+{% endif %}
+<h1>{{ app_label|capfirst }} settings</h1>
+{% if form.fields %}
+{% regroup form by class_name as classes %}
+<form method="post">
+	{% for class in classes %}
+		<div class="module">
+        <table summary="{% filter capfirst %}{% blocktrans with class.grouper as name %}Settings included in the {{ name }} class.{% endblocktrans %}{% endfilter %}" width="100%">
+			<caption>{% filter capfirst %}{% if class.grouper %}{% blocktrans with class.grouper as name %}{{ name }}{% endblocktrans %}{% else %}Application settings{% endif %}{% endfilter %}</caption>
+			{% for field in class.list %}
+				{% if field.errors %}
+				<tr class="error">
+					<td colspan="2">{{ field.errors }}</td>
+				</tr>
+				{% endif %}
+				<tr{% if field.errors %} class="error"{% endif %}>
+					<td>
+						{{ field.label_tag }}
+						{% if field.help_text %}
+							<p class="help">{{ field.help_text|escape }}</p>
+						{% endif %}
+					</td>
+					<td>{{ field }}</td>
+				</tr>
+			{% endfor %}
+			</table>
+		</div>
+	{% endfor %}
+<input type="submit" value="Save" class="default" />
+</form>
+{% else %}
+    <p>{% trans "You don't have permission to edit values." %}</p>
+{% endif %}
+</div>
+{% endblock %}
