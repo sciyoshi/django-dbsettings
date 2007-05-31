@@ -250,6 +250,11 @@ represented in Python as a ``timedelta_`` object.
 
 .. _timedelta: http://docs.python.org/lib/datetime-timedelta.html
 
+FloatValue
+----------
+
+Presents a standard input field, which becomes a ``float`` in Python.
+
 IntegerValue
 ------------
 

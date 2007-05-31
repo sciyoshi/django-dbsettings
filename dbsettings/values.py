@@ -2,8 +2,8 @@ import datetime
 
 from django import newforms as forms
 
-__all__ = ['Value', 'BooleanValue', 'DurationValue', 'IntegerValue',
-    'PercentValue', 'PositiveIntegerValue', 'StringValue']
+__all__ = ['Value', 'BooleanValue', 'DurationValue', 'FloatValue',
+    'IntegerValue', 'PercentValue', 'PositiveIntegerValue', 'StringValue']
 
 class Value(object):
 
@@ -45,6 +45,9 @@ class Value(object):
             return self.to_python(self.storage.value)
         except:
             return None
+
+    def __set__(self, instance, value):
+        raise NotImplementedError, "Settings may not changed in this manner."
 
     # Subclasses should override the following methods where applicable
 
@@ -104,6 +107,12 @@ class DurationValue(Value):
 
     def get_db_prep_save(self, value):
         return str(value.days * 24 * 3600 + value.seconds + float(value.microseconds) / 1000000)
+
+class FloatValue(Value):
+    field = forms.FloatField
+
+    def to_python(self, value):
+        return float(value)
 
 class IntegerValue(Value):
     field = forms.IntegerField
