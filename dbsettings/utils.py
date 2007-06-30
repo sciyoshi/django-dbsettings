@@ -13,7 +13,7 @@ def set_defaults(app, *defaults):
         printed = False
 
         for class_name, attribute_name, value in defaults:
-            if get_setting_storage(app.__name__, class_name, attribute_name) is None:
+            if not get_setting_storage(app.__name__, class_name, attribute_name):
                 if verbosity >= 2 and not printed:
                     # Print this message only once, and only if applicable
                     print "Installing default settings for %s" % app_label

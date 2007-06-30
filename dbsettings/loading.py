@@ -2,6 +2,7 @@ from bisect import bisect
 
 from django.utils.datastructures import SortedDict
 from django.db import transaction
+from django.core.cache import cache
 
 from dbsettings.models import Setting
 
@@ -26,8 +27,10 @@ class SettingDict(SortedDict):
         return False
 
 _settings = SettingDict()
-_storage = {}
 _initialized = [False]
+
+def _get_cache_key(module_name, class_name, attribute_name):
+    return '.'.join(['dbsettings', module_name, class_name, attribute_name])
 
 def get_all_settings():
     return list(_settings)
@@ -39,14 +42,23 @@ def get_setting(module_name, class_name, attribute_name):
     return _settings[module_name, class_name, attribute_name]
 
 def get_setting_storage(module_name, class_name, attribute_name):
-    return _storage.setdefault(
-        (module_name, class_name, attribute_name),
-        Setting(
-            module_name=module_name,
-            class_name=class_name,
-            attribute_name=attribute_name,
-        )
-    )
+    key = _get_cache_key(module_name, class_name, attribute_name)
+    storage = cache.get(key)
+    if storage is None:
+        try:
+            storage = Setting.objects.get(
+                module_name=module_name,
+                class_name=class_name,
+                attribute_name=attribute_name,
+            )
+        except Setting.DoesNotExist:
+            storage = Setting(
+                module_name=module_name,
+                class_name=class_name,
+                attribute_name=attribute_name,
+            )
+        cache.set(key, storage)
+    return storage
 
 def register_setting(setting):
     # If DB has not yet been queried, run a query
@@ -55,8 +67,9 @@ def register_setting(setting):
         transaction.enter_transaction_management()
         try:
             # Retrieve all stored setting values once during startup
-            for p in Setting.objects.all():
-                _storage[p.module_name, p.class_name, p.attribute_name] = p
+            for s in Setting.objects.all():
+                key = _get_cache_key(s.module_name, s.class_name, s.attribute_name)
+                cache.set(key, s)
         except:
             # Necessary in case setting values were used
             # prior to syncdb setting up data storage
@@ -65,7 +78,6 @@ def register_setting(setting):
         # Make sure initialization doesn't happen again
         _initialized[0] = True
 
-    setting.storage = get_setting_storage(*setting.key)
     if setting not in _settings:
         _settings.insert(setting.key, bisect(list(_settings), setting), setting)
     else:
@@ -73,5 +85,8 @@ def register_setting(setting):
 
 def set_setting_value(module_name, class_name, attribute_name, value):
     setting = get_setting(module_name, class_name, attribute_name)
-    setting.storage.value = setting.get_db_prep_save(value)
-    setting.storage.save()
+    storage = get_setting_storage(module_name, class_name, attribute_name)
+    storage.value = setting.get_db_prep_save(value)
+    storage.save()
+    key = _get_cache_key(module_name, class_name, attribute_name)
+    cache.delete(key)

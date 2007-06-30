@@ -24,7 +24,8 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                 key = forms.re_field_name.match(name).groups()
                 setting = loading.get_setting(*key)
                 try:
-                    current_value = setting.to_python(setting.storage.value)
+                    storage = loading.get_setting_storage(*key)
+                    current_value = setting.to_python(storage.value)
                 except:
                     current_value = None
                 if current_value != setting.to_python(value):

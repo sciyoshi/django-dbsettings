@@ -2,6 +2,8 @@ import datetime
 
 from django import newforms as forms
 
+from dbsettings.loading import get_setting_storage
+
 __all__ = ['Value', 'BooleanValue', 'DurationValue', 'FloatValue',
     'IntegerValue', 'PercentValue', 'PositiveIntegerValue', 'StringValue']
 
@@ -42,7 +44,8 @@ class Value(object):
         if instance == None:
             raise AttributeError, "%r is only accessible from %s instances." % (self.attribute_name, type.__name__)
         try:
-            return self.to_python(self.storage.value)
+            storage = get_setting_storage(*self.key)
+            return self.to_python(storage.value)
         except:
             return None
 

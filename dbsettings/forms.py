@@ -4,6 +4,7 @@ from django.db.models import get_model
 from django import newforms as forms
 from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
+from dbsettings.loading import get_setting_storage
 
 re_field_name = re.compile(r'^(.+)__(.*)__(.+)$')
 
@@ -58,10 +59,11 @@ def customized_editor(user, settings):
         )
         if user.has_perm(perm):
             # Add the field to the customized field list
+            storage = get_setting_storage(*setting.key)
             kwargs = {
                 'label': setting.description,
                 # Provide current setting values for initializing the form
-                'initial': setting.to_editor(setting.storage.value),
+                'initial': setting.to_editor(storage.value),
             }
             if setting.choices:
                 field = forms.ChoiceField(choices=setting.choices, **kwargs)
