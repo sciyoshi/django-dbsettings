@@ -77,7 +77,7 @@ class Group(object):
         # Create permission for editing settings on the model
         permission = (
             'can_edit_%s_settings' % cls.__name__.lower(),
-            'Can edit %s settings' % cls._meta.verbose_name,
+            'Can edit %s settings' % cls._meta.verbose_name_raw,
         )
         if permission not in cls._meta.permissions:
             # Add a permission for the setting editor
