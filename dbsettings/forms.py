@@ -62,6 +62,7 @@ def customized_editor(user, settings):
             storage = get_setting_storage(*setting.key)
             kwargs = {
                 'label': setting.description,
+                'help_text': setting.help_text,
                 # Provide current setting values for initializing the form
                 'initial': setting.to_editor(storage.value),
             }
