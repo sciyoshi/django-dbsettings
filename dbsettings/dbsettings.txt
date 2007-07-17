@@ -54,6 +54,24 @@ the rest. You may choose any location you like::
         ...
     )
 
+A note about caching
+--------------------
+
+This framework utilizes Django's built-in `cache framework`_, which is used to
+minimize how often the database needs to be accessed. During development,
+Django's built-in server runs in a single process, so all cache backends will
+work just fine.
+
+Most productions environments, including mod_python and FastCGI, run multiple
+processes, which some backends don't fully support. When using the ``simple``
+or ``locmem`` backends, updates to your settings won't be reflected immediately,
+causing your application to ignore the new changes.
+
+No other backends exhibit this behavior, but since ``simple`` is the default,
+make sure to specify a proper backend when moving to a production environment.
+
+.. _`cache framework`: http://www.djangoproject.com/documentation/cache/
+
 Usage
 =====
 
