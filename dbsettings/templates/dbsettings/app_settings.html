@@ -18,7 +18,6 @@
     {% blocktrans count form.errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
     </p>
 {% endif %}
-<h1>{{ app_label|capfirst }} settings</h1>
 {% if form.fields %}
 {% regroup form by class_name as classes %}
 <form method="post">

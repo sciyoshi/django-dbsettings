@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.text import capfirst
 
 from dbsettings import loading, forms
 
@@ -9,8 +10,10 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
     # Determine what set of settings this editor is used for
     if app_label is None:
         settings = loading.get_all_settings()
+        title = 'Site settings'
     else:
         settings = loading.get_app_settings(app_label)
+        title = '%s settings' % capfirst(app_label)
 
     # Create an editor customized for the current user
     editor = forms.customized_editor(request.user, settings)
@@ -44,7 +47,7 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
         form = editor()
 
     return render_to_response(template, {
-        'app_label': app_label,
+        'title': title,
         'form': form,
     }, context_instance=RequestContext(request))
 app_settings = staff_member_required(app_settings)
