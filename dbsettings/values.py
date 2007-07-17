@@ -4,8 +4,14 @@ from django import newforms as forms
 
 from dbsettings.loading import get_setting_storage
 
-__all__ = ['Value', 'BooleanValue', 'DurationValue', 'FloatValue',
-    'IntegerValue', 'PercentValue', 'PositiveIntegerValue', 'StringValue']
+try:
+    from decimal import Decimal
+except ImportError:
+    from django.utils._decimal import Decimal
+
+__all__ = ['Value', 'BooleanValue', 'DecimalValue', 'DurationValue',
+      'FloatValue', 'IntegerValue', 'PercentValue', 'PositiveIntegerValue',
+      'StringValue']
 
 class Value(object):
 
@@ -85,6 +91,12 @@ class BooleanValue(Value):
 
     to_editor = to_python
 
+class DecimalValue(Value):
+    field = forms.DecimalField
+
+    def to_python(self, value):
+        return Decimal(value)
+
 # DurationValue has a lot of duplication and ugliness because of issue #2443
 # Until DurationField is sorted out, this has to do some extra work
 class DurationValue(Value):
@@ -123,22 +135,22 @@ class IntegerValue(Value):
     def to_python(self, value):
         return int(value)
 
-class PercentValue(IntegerValue):
+class PercentValue(Value):
 
-    class field(forms.IntegerField):
+    class field(forms.DecimalField):
 
         def __init__(self, *args, **kwargs):
-            forms.IntegerField.__init__(self, 100, 0, *args, **kwargs)
+            forms.DecimalField.__init__(self, 100, 0, 5, 2, *args, **kwargs)
 
         class widget(forms.TextInput):
             def render(self, *args, **kwargs):
                 # Place a percent sign after a smaller text field
                 attrs = kwargs.pop('attrs', {})
-                attrs['size'] = attrs['maxlength'] = 3
+                attrs['size'] = attrs['maxlength'] = 6
                 return forms.TextInput.render(self, attrs=attrs, *args, **kwargs) + '%'
 
     def to_python(self, value):
-        return float(value) / 100
+        return Decimal(value) / 100
 
 class PositiveIntegerValue(IntegerValue):
 
