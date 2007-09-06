@@ -56,7 +56,7 @@ class Value(object):
             return None
 
     def __set__(self, instance, value):
-        raise NotImplementedError, "Settings may not changed in this manner."
+        raise AttributeError, "Settings may not changed in this manner."
 
     # Subclasses should override the following methods where applicable
 
