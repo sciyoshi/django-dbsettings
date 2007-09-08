@@ -74,6 +74,8 @@ def register_setting(setting):
             # Necessary in case setting values were used
             # prior to syncdb setting up data storage
             transaction.rollback()
+        else:
+            transaction.commit()
         transaction.leave_transaction_management()
         # Make sure initialization doesn't happen again
         _initialized[0] = True
