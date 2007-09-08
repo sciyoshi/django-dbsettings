@@ -18,8 +18,6 @@ module_settings = TestSettings()
 class Populated(models.Model):
     settings = TestSettings()
 
-print Populated._meta.permissions
-
 # These will be empty after startup
 class Unpopulated(models.Model):
     settings = TestSettings()
