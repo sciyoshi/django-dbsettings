@@ -27,7 +27,6 @@ class SettingDict(SortedDict):
         return False
 
 _settings = SettingDict()
-_initialized = [False]
 
 def _get_cache_key(module_name, class_name, attribute_name):
     return '.'.join(['dbsettings', module_name, class_name, attribute_name])
@@ -61,25 +60,6 @@ def get_setting_storage(module_name, class_name, attribute_name):
     return storage
 
 def register_setting(setting):
-    # If DB has not yet been queried, run a query
-    if not _initialized[0]:
-        # A transaction is necessary for backends like PostgreSQL
-        transaction.enter_transaction_management()
-        try:
-            # Retrieve all stored setting values once during startup
-            for s in Setting.objects.all():
-                key = _get_cache_key(s.module_name, s.class_name, s.attribute_name)
-                cache.set(key, s)
-        except:
-            # Necessary in case setting values were used
-            # prior to syncdb setting up data storage
-            transaction.rollback()
-        else:
-            transaction.commit()
-        transaction.leave_transaction_management()
-        # Make sure initialization doesn't happen again
-        _initialized[0] = True
-
     if setting not in _settings:
         _settings.insert(setting.key, bisect(list(_settings), setting), setting)
     else:
