@@ -8,10 +8,10 @@ class SettingManager(models.Manager):
 
 class Setting(models.Model):
     site = models.ForeignKey(Site)
-    module_name = models.CharField(maxlength=255)
-    class_name = models.CharField(maxlength=255, blank=True)
-    attribute_name = models.CharField(maxlength=255)
-    value = models.CharField(maxlength=255, blank=True)
+    module_name = models.CharField(max_length=255)
+    class_name = models.CharField(max_length=255, blank=True)
+    attribute_name = models.CharField(max_length=255)
+    value = models.CharField(max_length=255, blank=True)
 
     objects = SettingManager()
 

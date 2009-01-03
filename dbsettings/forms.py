@@ -1,7 +1,7 @@
 import re
 
 from django.db.models import get_model
-from django import newforms as forms
+from django import forms
 from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
 from dbsettings.loading import get_setting_storage
