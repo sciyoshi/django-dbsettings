@@ -92,8 +92,13 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Unpopulated.settings.integer, 13)
         self.assertEqual(Unpopulated.settings.string, 'Friday')
 
-        # But they can't be modified in-place
-        self.assertRaises(AttributeError, curry(setattr, Unpopulated.settings, 'integer', 10))
+        # And they can be modified in-place
+        Unpopulated.settings.boolean = False
+        Unpopulated.settings.integer = 42
+        Unpopulated.settings.string = 'Caturday'
+        self.assertEqual(Unpopulated.settings.boolean, False)
+        self.assertEqual(Unpopulated.settings.integer, 42)
+        self.assertEqual(Unpopulated.settings.string, 'Caturday')
 
     def test_declaration(self):
         "Group declarations can only contain values and a docstring"

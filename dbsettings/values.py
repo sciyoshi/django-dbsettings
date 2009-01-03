@@ -1,8 +1,8 @@
 import datetime
 
-from django import newforms as forms
+from django import forms
 
-from dbsettings.loading import get_setting_storage
+from dbsettings.loading import get_setting_storage, set_setting_value
 
 try:
     from decimal import Decimal
@@ -56,7 +56,9 @@ class Value(object):
             return None
 
     def __set__(self, instance, value):
-        raise AttributeError, "Settings may not changed in this manner."
+        current_value = self.__get__(instance)
+        if self.to_python(value) != current_value:
+            set_setting_value(*(self.key + (value,)))
 
     # Subclasses should override the following methods where applicable
 
