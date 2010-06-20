@@ -8,7 +8,7 @@ def set_defaults(app, *defaults):
         raise ImproperlyConfigured("No defaults were supplied to set_defaults.")
     app_label = app.__name__.split('.')[-2]
 
-    def install_settings(app, created_models, verbosity=2):
+    def install_settings(app, created_models, verbosity=2, **kwargs):
         printed = False
 
         for class_name, attribute_name, value in defaults:
