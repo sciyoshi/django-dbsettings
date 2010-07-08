@@ -11,20 +11,12 @@ __all__ = ['get_all_settings', 'get_setting', 'get_setting_storage',
 
 class SettingDict(SortedDict):
     "Sorted dict that has a bit more list-type functionality"
-    def insert(self, key, index, value):
-        if key not in self.keys():
-            self.keyOrder.insert(index, key)
-            self[key] = value
 
     def __iter__(self):
-        for k in self.keyOrder:
-            yield self[k]
+        return self.itervalues()
 
     def __contains__(self, value):
-        for v in self.values():
-            if v == value:
-                return True
-        return False
+        return value in self.values()
 
 _settings = SettingDict()
 
@@ -61,7 +53,7 @@ def get_setting_storage(module_name, class_name, attribute_name):
 
 def register_setting(setting):
     if setting not in _settings:
-        _settings.insert(setting.key, bisect(list(_settings), setting), setting)
+        _settings.insert(bisect(list(_settings), setting), setting.key, setting)
     else:
         _settings[setting.key] = setting
 
