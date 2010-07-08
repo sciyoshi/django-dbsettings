@@ -15,9 +15,6 @@ class SettingDict(SortedDict):
     def __iter__(self):
         return self.itervalues()
 
-    def __contains__(self, value):
-        return value in self.values()
-
 _settings = SettingDict()
 
 def _get_cache_key(module_name, class_name, attribute_name):
