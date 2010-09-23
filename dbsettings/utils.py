@@ -22,4 +22,4 @@ def set_defaults(app, *defaults):
                 except:
                     raise ImproperlyConfigured("%s requires dbsettings." % app_label)
 
-    signals.post_syncdb.connect(install_settings, sender=app)
+    signals.post_syncdb.connect(install_settings, sender=app, weak=False)
