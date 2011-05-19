@@ -68,11 +68,11 @@ class Value(object):
 
     def get_db_prep_save(self, value):
         "Returns a value suitable for storage into a CharField"
-        return str(value)
+        return unicode(value)
 
     def to_editor(self, value):
         "Returns a value suitable for display in a form widget"
-        return str(value)
+        return unicode(value)
 
 ###############
 # VALUE TYPES #
@@ -123,7 +123,7 @@ class DurationValue(Value):
             raise forms.ValidationError('The maximum allowed value is %s' % datetime.timedelta.max)
 
     def get_db_prep_save(self, value):
-        return str(value.days * 24 * 3600 + value.seconds + float(value.microseconds) / 1000000)
+        return unicode(value.days * 24 * 3600 + value.seconds + float(value.microseconds) / 1000000)
 
 class FloatValue(Value):
     field = forms.FloatField
