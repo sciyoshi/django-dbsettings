@@ -51,7 +51,7 @@
 			</table>
 		</div>
 	{% endfor %}
-<input type="submit" value="Save" class="default" />
+{% csrf_token %}<input type="submit" value="Save" class="default" />
 </form>
 {% else %}
     <p>{% trans "You don't have permission to edit values." %}</p>
