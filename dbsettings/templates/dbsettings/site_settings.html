@@ -25,6 +25,7 @@
     {% blocktrans count form.errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
     </p>
 {% endif %}
+{{ forml.fields }}
 {% if form.fields %}
 {% regroup form by module_name as modules %}
 <form method="post">
