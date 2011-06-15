@@ -11,7 +11,7 @@ except ImportError:
 
 __all__ = ['Value', 'BooleanValue', 'DecimalValue', 'DurationValue',
       'FloatValue', 'IntegerValue', 'PercentValue', 'PositiveIntegerValue',
-      'StringValue']
+      'StringValue', 'TextValue', 'MultiSeparatorValue']
 
 class Value(object):
 
@@ -164,3 +164,25 @@ class PositiveIntegerValue(IntegerValue):
 
 class StringValue(Value):
     field = forms.CharField
+
+class TextValue(Value):
+    field = forms.Textarea
+
+    def to_python(self, value):
+        return unicode(value)
+
+class MultiSeparatorValue(TextValue):
+    """Provides a way to store list-like string settings.
+    e.g 'mail@test.com;*@blah.com' would be returned as
+        [u'mail@test.com', u'*@blah.com']. What the method
+        uses to split on can be defined by passing in a 
+        separator string (default is semi-colon as above).
+    """
+
+    def __init__(self, description=None, help_text=None, separator=';'):
+        self.separator = separator
+        super(MultiSeparatorValue, self).__init__(description, help_text)
+
+    def to_python(self, value):
+        value = unicode(value)
+        return value.split(self.separator)
