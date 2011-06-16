@@ -1,7 +1,6 @@
 from bisect import bisect
 
 from django.utils.datastructures import SortedDict
-from django.db import transaction
 from django.core.cache import cache
 
 from dbsettings.models import Setting

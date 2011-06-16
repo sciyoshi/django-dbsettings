@@ -36,16 +36,16 @@ class SettingsTestCase(test.TestCase):
     def setUp(self):
         # Standard test fixtures don't update the in-memory cache.
         # So we have to do it ourselves this time.
-        loading.set_setting_value('dbsettings.tests', 'Populated', 'boolean', True)
-        loading.set_setting_value('dbsettings.tests', 'Populated', 'integer', 42)
-        loading.set_setting_value('dbsettings.tests', 'Populated', 'string', 'Ni!')
-        loading.set_setting_value('dbsettings.tests', '', 'boolean', False)
-        loading.set_setting_value('dbsettings.tests', '', 'integer', 14)
-        loading.set_setting_value('dbsettings.tests', '', 'string', 'Module')
-        loading.set_setting_value('dbsettings.tests', 'Combined', 'boolean', False)
-        loading.set_setting_value('dbsettings.tests', 'Combined', 'integer', 1138)
-        loading.set_setting_value('dbsettings.tests', 'Combined', 'string', 'THX')
-        loading.set_setting_value('dbsettings.tests', 'Combined', 'enabled', True)
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'boolean', True)
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'integer', 42)
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'string', 'Ni!')
+        loading.set_setting_value('dbsettings.tests.tests', '', 'boolean', False)
+        loading.set_setting_value('dbsettings.tests.tests', '', 'integer', 14)
+        loading.set_setting_value('dbsettings.tests.tests', '', 'string', 'Module')
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'boolean', False)
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'integer', 1138)
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'string', 'THX')
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'enabled', True)
 
     def test_settings(self):
         "Make sure settings groups are initialized properly"
@@ -85,9 +85,9 @@ class SettingsTestCase(test.TestCase):
         self.assertRaises(AttributeError, lambda: Unpopulated().settings)
 
         # Updates are reflected in the live settings
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'boolean', True)
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'integer', 13)
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'string', 'Friday')
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'boolean', True)
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'integer', 13)
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'string', 'Friday')
         self.assertEqual(Unpopulated.settings.boolean, True)
         self.assertEqual(Unpopulated.settings.integer, 13)
         self.assertEqual(Unpopulated.settings.string, 'Friday')
@@ -163,17 +163,17 @@ class SettingsTestCase(test.TestCase):
 
         # Erroneous submissions should be caught by newforms
         data = {
-            'dbsettings.tests__Editable__integer': '3.5',
-            'dbsettings.tests__Editable__string': '',
+            'dbsettings.tests.tests__Editable__integer': '3.5',
+            'dbsettings.tests.tests__Editable__string': '',
         }
         response = self.client.post(site_form, data)
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__integer', 'Enter a whole number.')
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__string', 'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__integer', 'Enter a whole number.')
+        self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__string', 'This field is required.')
 
         # Successful submissions should redirect
         data = {
-            'dbsettings.tests__Editable__integer': '4',
-            'dbsettings.tests__Editable__string': 'Success!',
+            'dbsettings.tests.tests__Editable__integer': '4',
+            'dbsettings.tests.tests__Editable__string': 'Success!',
         }
         response = self.client.post(site_form, data)
         self.assertRedirects(response, site_form)
