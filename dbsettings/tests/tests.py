@@ -159,7 +159,7 @@ class SettingsTestCase(test.TestCase):
         self.assertTemplateUsed(response, 'dbsettings/app_settings.html')
         self.assertEqual(response.context[0]['title'], 'Dbsettings settings')
         # Only the Unpopulated settings should show up
-        self.assertEqual(len(response.context[0]['form'].fields), 3)
+        self.assertEqual(len(response.context[0]['form'].fields), 0)
 
         # Erroneous submissions should be caught by newforms
         data = {
@@ -167,6 +167,7 @@ class SettingsTestCase(test.TestCase):
             'dbsettings.tests.tests__Editable__string': '',
         }
         response = self.client.post(site_form, data)
+        import ipdb; ipdb.set_trace();
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__integer', 'Enter a whole number.')
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__string', 'This field is required.')
 

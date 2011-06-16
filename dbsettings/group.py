@@ -1,6 +1,5 @@
 import sys
 
-from dbsettings.models import Setting
 from dbsettings.values import Value
 from dbsettings.loading import register_setting
 

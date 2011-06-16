@@ -59,12 +59,6 @@
 			</table>
 		</div>
 	{% endfor %}
-	{% for app in form.apps %}
-		<h3>{{ app.app_label }}</h3>
-		{% for field in app.fields %}
-			<p>{{ field.label }}</p>
-		{% endfor %}
-	{% endfor %}
 {% csrf_token %}<input type="submit" value="Save" class="default" />
 </form>
 {% else %}

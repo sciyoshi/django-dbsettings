@@ -9,9 +9,10 @@ try:
 except ImportError:
     from django.utils._decimal import Decimal
 
-__all__ = ['Value', 'BooleanValue', 'DecimalValue', 'DurationValue',
-      'FloatValue', 'IntegerValue', 'PercentValue', 'PositiveIntegerValue',
-      'StringValue', 'TextValue', 'MultiSeparatorValue']
+__all__ = ['Value', 'BooleanValue', 'DecimalValue', 'EmailValue', 
+           'DurationValue', 'FloatValue', 'IntegerValue', 'PercentValue', 
+           'PositiveIntegerValue', 'StringValue', 'TextValue', 
+           'MultiSeparatorValue']
 
 class Value(object):
 
@@ -166,7 +167,13 @@ class StringValue(Value):
     field = forms.CharField
 
 class TextValue(Value):
-    field = forms.Textarea
+    field = forms.CharField
+
+    def to_python(self, value):
+        return unicode(value)
+
+class EmailValue(Value):
+    field = forms.EmailField
 
     def to_python(self, value):
         return unicode(value)
@@ -181,7 +188,14 @@ class MultiSeparatorValue(TextValue):
 
     def __init__(self, description=None, help_text=None, separator=';'):
         self.separator = separator
-        super(MultiSeparatorValue, self).__init__(description, help_text)
+        super(MultiSeparatorValue, self).__init__(description=description, 
+                                                  help_text=help_text)
+
+    class field(forms.CharField):
+        
+        class widget(forms.Textarea):
+            pass
+
 
     def to_python(self, value):
         value = unicode(value)

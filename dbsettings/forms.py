@@ -35,20 +35,6 @@ class SettingsEditor(forms.BaseForm):
 
         return field
 
-    def apps(self):
-        if self.fields:
-            app_list, fields, app_label = [], [], None
-            for field in self:
-                if app_label and app_label != field.app_label:
-                    app_list.append({
-                        'app_label': app_label,
-                        'fields': fields,
-                    })
-                    fields = []
-                app_label = field.app_label
-                fields.append(field)
-            return app_list
-
 def customized_editor(user, settings):
     "Customize the setting editor based on the current user and setting list"
     base_fields = SortedDict()
