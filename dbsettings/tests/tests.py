@@ -10,6 +10,8 @@ class TestSettings(dbsettings.Group):
     boolean = dbsettings.BooleanValue()
     integer = dbsettings.IntegerValue()
     string = dbsettings.StringValue()
+    list_semi_colon = dbsettings.MultiSeparatorValue()
+    list_comma = dbsettings.MultiSeparatorValue(separator=',')
 
 # This is assigned to module, rather than a model
 module_settings = TestSettings()
@@ -39,12 +41,18 @@ class SettingsTestCase(test.TestCase):
         loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'boolean', True)
         loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'integer', 42)
         loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'string', 'Ni!')
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'list_semi_colon', 'a@b.com;c@d.com;e@f.com')
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'list_comma', 'a@b.com,c@d.com,e@f.com')
         loading.set_setting_value('dbsettings.tests.tests', '', 'boolean', False)
         loading.set_setting_value('dbsettings.tests.tests', '', 'integer', 14)
         loading.set_setting_value('dbsettings.tests.tests', '', 'string', 'Module')
+        loading.set_setting_value('dbsettings.tests.tests', '', 'list_semi_colon', 'g@h.com;i@j.com;k@l.com')
+        loading.set_setting_value('dbsettings.tests.tests', '', 'list_comma', 'g@h.com,i@j.com,k@l.com')
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'boolean', False)
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'integer', 1138)
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'string', 'THX')
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'list_semi_colon', 'm@n.com;o@p.com;q@r.com')
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'list_comma', 'm@n.com,o@p.com,q@r.com')
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'enabled', True)
 
     def test_settings(self):
@@ -54,26 +62,38 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Populated.settings.boolean, True)
         self.assertEqual(Populated.settings.integer, 42)
         self.assertEqual(Populated.settings.string, 'Ni!')
+        self.assertEqual(Populated.settings.list_semi_colon, ['a@b.com', 'c@d.com', 'e@f.com'])
+        self.assertEqual(Populated.settings.list_comma, ['a@b.com', 'c@d.com', 'e@f.com'])
 
         # Module settings are kept separate from model settings
         self.assertEqual(module_settings.boolean, False)
         self.assertEqual(module_settings.integer, 14)
         self.assertEqual(module_settings.string, 'Module')
+        self.assertEqual(module_settings.list_semi_colon, ['g@h.com', 'i@j.com', 'k@l.com'])
+        self.assertEqual(module_settings.list_comma, ['g@h.com', 'i@j.com', 'k@l.com'])
 
         # Settings can be added together
         self.assertEqual(Combined.settings.boolean, False)
         self.assertEqual(Combined.settings.integer, 1138)
         self.assertEqual(Combined.settings.string, 'THX')
         self.assertEqual(Combined.settings.enabled, True)
+        self.assertEqual(Combined.settings.list_semi_colon, ['m@n.com', 'o@p.com', 'q@r.com'])
+        self.assertEqual(Combined.settings.list_comma, ['m@n.com', 'o@p.com', 'q@r.com'])
 
         # Settings not in the database use empty defaults
         self.assertEqual(Unpopulated.settings.boolean, False)
         self.assertEqual(Unpopulated.settings.integer, None)
         self.assertEqual(Unpopulated.settings.string, '')
+        self.assertEqual(Unpopulated.settings.list_semi_colon, [])
+        self.assertEqual(Unpopulated.settings.list_comma, [])
 
         # Settings should be retrieved in the order of definition
-        self.assertEqual(Populated.settings.keys(), ['boolean', 'integer', 'string'])
-        self.assertEqual(Combined.settings.keys(), ['boolean', 'integer', 'string', 'enabled'])
+        self.assertEqual(Populated.settings.keys(), 
+                         ['boolean', 'integer', 'string', 'list_semi_colon',
+                          'list_comma'])
+        self.assertEqual(Combined.settings.keys(), 
+                         ['boolean', 'integer', 'string', 'list_semi_colon',
+                          'list_comma', 'enabled'])
 
         # Values should be coerced to the proper Python types
         self.assert_(isinstance(Populated.settings.boolean, bool))
@@ -88,17 +108,26 @@ class SettingsTestCase(test.TestCase):
         loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'boolean', True)
         loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'integer', 13)
         loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'string', 'Friday')
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'list_semi_colon', 'aa@bb.com;cc@dd.com')
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'list_comma', 'aa@bb.com,cc@dd.com')
         self.assertEqual(Unpopulated.settings.boolean, True)
         self.assertEqual(Unpopulated.settings.integer, 13)
         self.assertEqual(Unpopulated.settings.string, 'Friday')
+        self.assertEqual(Unpopulated.settings.list_semi_colon, ['aa@bb.com', 'cc@dd.com'])
+        self.assertEqual(Unpopulated.settings.list_comma, ['aa@bb.com', 'cc@dd.com'])
 
         # And they can be modified in-place
         Unpopulated.settings.boolean = False
         Unpopulated.settings.integer = 42
         Unpopulated.settings.string = 'Caturday'
+        # Test correct stripping while we're at it.
+        Unpopulated.settings.list_semi_colon = 'ee@ff.com; gg@hh.com'
+        Unpopulated.settings.list_comma = 'ee@ff.com ,gg@hh.com'
         self.assertEqual(Unpopulated.settings.boolean, False)
         self.assertEqual(Unpopulated.settings.integer, 42)
         self.assertEqual(Unpopulated.settings.string, 'Caturday')
+        self.assertEqual(Unpopulated.settings.list_semi_colon, ['ee@ff.com', 'gg@hh.com'])
+        self.assertEqual(Unpopulated.settings.list_comma, ['ee@ff.com', 'gg@hh.com'])
 
     def test_declaration(self):
         "Group declarations can only contain values and a docstring"
@@ -125,7 +154,6 @@ class SettingsTestCase(test.TestCase):
         from django.core.urlresolvers import reverse
         
         site_form = reverse(views.site_settings)
-        app_form = reverse(views.app_settings, kwargs={'app_label': 'dbsettings'})
 
         # Set up a users to test the editor forms
         user = User.objects.create_user('dbsettings', '', 'dbsettings')
@@ -154,27 +182,25 @@ class SettingsTestCase(test.TestCase):
         perm = Permission.objects.get(codename='can_edit_editable_settings')
         user.user_permissions.add(perm)
 
-        # Test the app-specific settings editor, now with permissions
-        response = self.client.get(app_form)
-        self.assertTemplateUsed(response, 'dbsettings/app_settings.html')
-        self.assertEqual(response.context[0]['title'], 'Dbsettings settings')
-        # Only the Unpopulated settings should show up
-        self.assertEqual(len(response.context[0]['form'].fields), 0)
-
         # Erroneous submissions should be caught by newforms
         data = {
             'dbsettings.tests.tests__Editable__integer': '3.5',
             'dbsettings.tests.tests__Editable__string': '',
+            'dbsettings.tests.tests__Editable__list_semi_colon': '',
+            'dbsettings.tests.tests__Editable__list_comma': '',
         }
         response = self.client.post(site_form, data)
-        import ipdb; ipdb.set_trace();
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__integer', 'Enter a whole number.')
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__string', 'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__list_semi_colon', 'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__list_comma', 'This field is required.')
 
         # Successful submissions should redirect
         data = {
             'dbsettings.tests.tests__Editable__integer': '4',
             'dbsettings.tests.tests__Editable__string': 'Success!',
+            'dbsettings.tests.tests__Editable__list_semi_colon': 'jj@kk.com;ll@mm.com',
+            'dbsettings.tests.tests__Editable__list_comma': 'jj@kk.com,ll@mm.com',
         }
         response = self.client.post(site_form, data)
         self.assertRedirects(response, site_form)
@@ -182,3 +208,5 @@ class SettingsTestCase(test.TestCase):
         # And the data submitted should be immediately available in Python
         self.assertEqual(Editable.settings.integer, 4)
         self.assertEqual(Editable.settings.string, 'Success!')
+        self.assertEqual(Editable.settings.list_semi_colon, ['jj@kk.com', 'll@mm.com'])
+        self.assertEqual(Editable.settings.list_comma, ['jj@kk.com', 'll@mm.com'])

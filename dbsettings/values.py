@@ -196,7 +196,11 @@ class MultiSeparatorValue(TextValue):
         class widget(forms.Textarea):
             pass
 
-
     def to_python(self, value):
-        value = unicode(value)
-        return value.split(self.separator)
+        if value:
+            value = unicode(value)
+            value = value.split(self.separator)
+            value = [x.strip() for x in value]
+        else:
+            value = []
+        return value
