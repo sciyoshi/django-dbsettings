@@ -51,6 +51,7 @@ def customized_editor(user, settings):
                 'help_text': setting.help_text,
                 # Provide current setting values for initializing the form
                 'initial': setting.to_editor(storage.value),
+                'required': setting.required,
             }
             if setting.choices:
                 field = forms.ChoiceField(choices=setting.choices, **kwargs)

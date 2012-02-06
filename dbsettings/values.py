@@ -18,10 +18,11 @@ class Value(object):
 
     creation_counter = 0
 
-    def __init__(self, description=None, help_text=None, choices=None):
+    def __init__(self, description=None, help_text=None, choices=None, required=True):
         self.description = description
         self.help_text = help_text
         self.choices = choices or []
+        self.required = required
 
         self.creation_counter = Value.creation_counter
         Value.creation_counter += 1
