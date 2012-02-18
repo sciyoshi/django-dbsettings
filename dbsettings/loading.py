@@ -39,10 +39,12 @@ def get_setting_storage(module_name, class_name, attribute_name):
                 attribute_name=attribute_name,
             )
         except Setting.DoesNotExist:
+            setting_object = get_setting(module_name, class_name, attribute_name)
             storage = Setting(
                 module_name=module_name,
                 class_name=class_name,
                 attribute_name=attribute_name,
+                value=setting_object.default,
             )
         cache.set(key, storage)
     return storage

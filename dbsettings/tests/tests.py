@@ -16,12 +16,26 @@ class TestSettings(dbsettings.Group):
 # This is assigned to module, rather than a model
 module_settings = TestSettings()
 
+class Defaults(models.Model):
+    class settings(dbsettings.Group):
+        boolean = dbsettings.BooleanValue(default=True)
+        boolean_false = dbsettings.BooleanValue(default=False)
+        integer = dbsettings.IntegerValue(default=1)
+        string = dbsettings.StringValue(default="default")
+        list_semi_colon = dbsettings.MultiSeparatorValue(default=['one','two'])
+        list_comma = dbsettings.MultiSeparatorValue(separator=',',default=('one','two'))
+    settings = settings()
+
 # These will be populated by the fixture data
 class Populated(models.Model):
     settings = TestSettings()
 
 # These will be empty after startup
 class Unpopulated(models.Model):
+    settings = TestSettings()
+
+# These will allow blank values
+class Blankable(models.Model):
     settings = TestSettings()
 
 class Editable(models.Model):
@@ -87,6 +101,15 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Unpopulated.settings.list_semi_colon, [])
         self.assertEqual(Unpopulated.settings.list_comma, [])
 
+        # ...Unless a default paramter was specified, then they use that
+        self.assertEqual(Defaults.settings.boolean, True)
+        self.assertEqual(Defaults.settings.boolean_false, False)
+        self.assertEqual(Defaults.settings.integer, 1)
+        self.assertEqual(Defaults.settings.string, 'default')
+        self.assertEqual(Defaults.settings.list_semi_colon, ['one','two'])
+        self.assertEqual(Defaults.settings.list_comma, ['one','two'])
+
+
         # Settings should be retrieved in the order of definition
         self.assertEqual(Populated.settings.keys(), 
                          ['boolean', 'integer', 'string', 'list_semi_colon',
@@ -116,6 +139,20 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Unpopulated.settings.list_semi_colon, ['aa@bb.com', 'cc@dd.com'])
         self.assertEqual(Unpopulated.settings.list_comma, ['aa@bb.com', 'cc@dd.com'])
 
+        # Updating settings with defaults
+        loading.set_setting_value('dbsettings.tests.tests', 'Defaults', 'boolean', False)
+        self.assertEqual(Defaults.settings.boolean, False)
+        loading.set_setting_value('dbsettings.tests.tests', 'Defaults', 'boolean_false', True)
+        self.assertEqual(Defaults.settings.boolean_false, True)
+
+
+        # Updating blankable settings
+        self.assertEqual(Blankable.settings.string, '')
+        loading.set_setting_value('dbsettings.tests.tests', 'Blankable', 'string', 'Eli')
+        self.assertEqual(Blankable.settings.string, 'Eli')
+        loading.set_setting_value('dbsettings.tests.tests', 'Blankable', 'string', '')
+        self.assertEqual(Blankable.settings.string, '')
+
         # And they can be modified in-place
         Unpopulated.settings.boolean = False
         Unpopulated.settings.integer = 42
@@ -127,7 +164,7 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Unpopulated.settings.integer, 42)
         self.assertEqual(Unpopulated.settings.string, 'Caturday')
         self.assertEqual(Unpopulated.settings.list_semi_colon, ['ee@ff.com', 'gg@hh.com'])
-        self.assertEqual(Unpopulated.settings.list_comma, ['ee@ff.com', 'gg@hh.com'])
+        self.assertEqual(Unpopulated.settings.list_comma, ['ee@ff.com', 'gg@hh.com'])        
 
     def test_declaration(self):
         "Group declarations can only contain values and a docstring"

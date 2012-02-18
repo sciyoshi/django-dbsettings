@@ -17,12 +17,17 @@ __all__ = ['Value', 'BooleanValue', 'DecimalValue', 'EmailValue',
 class Value(object):
 
     creation_counter = 0
+    unitialized_value = None
 
-    def __init__(self, description=None, help_text=None, choices=None, required=True):
+    def __init__(self, description=None, help_text=None, choices=None, required=True, default=None):
         self.description = description
         self.help_text = help_text
         self.choices = choices or []
         self.required = required
+        if default == None:
+            self.default = self.unitialized_value
+        else:
+            self.default = default
 
         self.creation_counter = Value.creation_counter
         Value.creation_counter += 1
@@ -81,7 +86,7 @@ class Value(object):
 ###############
 
 class BooleanValue(Value):
-
+    unitialized_value = False
     class field(forms.BooleanField):
 
         def __init__(self, *args, **kwargs):
@@ -165,15 +170,18 @@ class PositiveIntegerValue(IntegerValue):
             forms.IntegerField.__init__(self, *args, **kwargs)
 
 class StringValue(Value):
+    unitialized_value = ''
     field = forms.CharField
 
 class TextValue(Value):
+    unitialized_value = ''
     field = forms.CharField
 
     def to_python(self, value):
         return unicode(value)
 
 class EmailValue(Value):
+    unitialized_value = ''
     field = forms.EmailField
 
     def to_python(self, value):
@@ -187,10 +195,15 @@ class MultiSeparatorValue(TextValue):
         separator string (default is semi-colon as above).
     """
 
-    def __init__(self, description=None, help_text=None, separator=';'):
+    def __init__(self, description=None, help_text=None, separator=';', required=True, default=None):
         self.separator = separator
+        if default != None:
+            # convert from list to string
+            default = separator.join(default)
         super(MultiSeparatorValue, self).__init__(description=description, 
-                                                  help_text=help_text)
+                                                  help_text=help_text,
+                                                  required=required,
+                                                  default=default)
 
     class field(forms.CharField):
         
