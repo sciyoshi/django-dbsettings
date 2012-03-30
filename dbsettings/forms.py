@@ -4,6 +4,8 @@ from django.db.models import get_model
 from django import forms
 from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
+from django.core.files.uploadedfile import SimpleUploadedFile, UploadedFile
+
 from dbsettings.loading import get_setting_storage
 
 re_field_name = re.compile(r'^(.+)__(.*)__(.+)$')
@@ -59,3 +61,7 @@ def customized_editor(user, settings):
                 field = setting.field(**kwargs)
             base_fields['%s__%s__%s' % setting.key] = field
     return type('SettingsEditor', (SettingsEditor,), {'base_fields': base_fields})
+
+def get_initial_values(user, settings):
+    "Returns initial values for the form"
+    pass

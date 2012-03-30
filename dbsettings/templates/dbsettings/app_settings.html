@@ -26,7 +26,7 @@
 {% endif %}
 {% if form.fields %}
 {% regroup form by class_name as classes %}
-<form method="post">
+<form enctype="multipart/form-data" method="post">
 	{% for class in classes %}
 		<div class="module">
         <table summary="{% filter capfirst %}{% blocktrans with class.grouper as name %}Settings included in the {{ name }} class.{% endblocktrans %}{% endfilter %}" width="100%">

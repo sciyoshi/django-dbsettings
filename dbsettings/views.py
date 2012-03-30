@@ -20,9 +20,10 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
 
     if request.method == 'POST':
         # Populate the form with user-submitted data
-        form = editor(request.POST.copy())
+        form = editor(request.POST.copy(), request.FILES)
         if form.is_valid():
             form.full_clean()
+
             for name, value in form.cleaned_data.items():
                 key = forms.re_field_name.match(name).groups()
                 setting = loading.get_setting(*key)
@@ -31,6 +32,7 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                     current_value = setting.to_python(storage.value)
                 except:
                     current_value = None
+
                 if current_value != setting.to_python(value):
                     args = key + (value,)
                     loading.set_setting_value(*args)
@@ -40,7 +42,7 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                         location = setting.class_name
                     else:
                         location = setting.module_name
-                    request.user.message_set.create(message='Updated %s on %s' % (setting.description, location))
+                    request.user.message_set.create(message='Updated %s on %s' % (unicode(setting.description), location))
             return HttpResponseRedirect(request.path)
     else:
         # Leave the form populated with current setting values
