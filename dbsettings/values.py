@@ -261,6 +261,9 @@ class ImageValue(Value):
 
     def get_db_prep_save(self, value):
         "Returns a value suitable for storage into a CharField"
+        if not value:
+            return None
+
         hashed_name = md5(unicode(time.time())).hexdigest() + value.name[-4:]
         image_path = pjoin(self._upload_to, hashed_name)
         dest_name = pjoin(settings.MEDIA_ROOT, image_path)
@@ -273,6 +276,9 @@ class ImageValue(Value):
 
     def to_editor(self, value):
         "Returns a value suitable for display in a form widget"
+        if not value:
+            return None
+
         file_name = pjoin(settings.MEDIA_ROOT, value)
         try:
             with open(file_name, 'rb') as f:
