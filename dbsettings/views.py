@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.text import capfirst
+from django.contrib import messages
 
 from dbsettings import loading, forms
 
@@ -42,7 +43,8 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                         location = setting.class_name
                     else:
                         location = setting.module_name
-                    request.user.message_set.create(message='Updated %s on %s' % (unicode(setting.description), location))
+                    messages.add_message(request, messages.INFO, u'Updated {} on {}'.format(unicode(setting.description), location))
+
             return HttpResponseRedirect(request.path)
     else:
         # Leave the form populated with current setting values

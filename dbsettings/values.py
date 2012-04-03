@@ -229,8 +229,7 @@ class MultiSeparatorValue(TextValue):
 class ImageValue(Value):
     def __init__(self, *args, **kwargs):
         if 'upload_to' in kwargs:
-            self._upload_to = kwargs['upload_to']
-            del kwargs['upload_to']
+            self._upload_to = kwargs.pop('upload_to]', '')
         super(ImageValue, self).__init__(*args, **kwargs)
 
     class field(forms.ImageField):

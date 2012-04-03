@@ -4,7 +4,6 @@ from django.db.models import get_model
 from django import forms
 from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
-from django.core.files.uploadedfile import SimpleUploadedFile, UploadedFile
 
 from dbsettings.loading import get_setting_storage
 
