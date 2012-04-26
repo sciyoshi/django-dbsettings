@@ -1,3 +1,5 @@
+(ImageValue included)
+
 ================================
 Storing settings in the database
 ================================
