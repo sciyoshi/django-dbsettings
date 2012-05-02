@@ -43,7 +43,8 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                         location = setting.class_name
                     else:
                         location = setting.module_name
-                    messages.add_message(request, messages.INFO, u'Updated {} on {}'.format(unicode(setting.description), location))
+                    update_msg = u'Updated %s on %s' % (unicode(setting.description), location)
+                    messages.add_message(request, messages.INFO, update_msg )
 
             return HttpResponseRedirect(request.path)
     else:
