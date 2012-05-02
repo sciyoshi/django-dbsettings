@@ -246,8 +246,9 @@ class ImageValue(Value):
                         raise IOError('No value')
 
                     Image.open(value.file)
-                    file_name = pjoin(settings.MEDIA_URL, value.name)
-                    output.append(u'<p><img src="{}" width="100" /></p>'.format(file_name))
+                    file_name = pjoin(settings.MEDIA_URL, value.name).replace("\\","/")
+                    params = {"file_name" : file_name }
+                    output.append(u'<p><img src="%(file_name)s" width="100" /></p>' % params )
                 except IOError:
                     pass
 
