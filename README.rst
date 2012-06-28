@@ -304,6 +304,37 @@ StringValue
 Presents a standard input, accepting any text string up to 255 characters. In
 Python, the value is accessed as a standard string.
 
+DateTimeValue
+-------------
+
+Presents a standard input field, which becomes a ``datetime`` in Python.
+
+User input will be parsed according to ``DATETIME_INPUT_FORMATS`` setting.
+
+In code, one can assign to field string or datetime object::
+
+    # These two statements has the same effect
+    myapp.Feed.next_feed = '2012-06-01 00:00:00'
+    myapp.Feed.next_feed = datetime.datetime(2012, 6, 1, 0, 0, 0)
+
+DateValue
+---------
+
+Presents a standard input field, which becomes a ``date`` in Python.
+
+User input will be parsed according to ``DATE_INPUT_FORMATS`` setting.
+
+See ``DateTimeValue`` for the remark about assigning.
+
+TimeValue
+---------
+
+Presents a standard input field, which becomes a ``time`` in Python.
+
+User input will be parsed according to ``TIME_INPUT_FORMATS`` setting.
+
+See ``DateTimeValue`` for the remark about assigning.
+
 Setting defaults for a distributed application
 ==============================================
 
