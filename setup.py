@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 # Dynamically calculate the version based on dbsettings.VERSION
-version_tuple = (0, 1, 'alpha')
+version_tuple = (0, 1, None)
 if version_tuple[2] is not None:
     version = "%d.%d_%s" % version_tuple
 else:
@@ -17,7 +17,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     license='BSD',
-    classifiers = ['Development Status :: 1 - Alpha',
+    classifiers = ['Development Status :: 4 - Beta',
                    'Environment :: Web Environment',
                    'Framework :: Django',
                    'Intended Audience :: Developers',
