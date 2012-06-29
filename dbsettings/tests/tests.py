@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django import test
 from django.utils.functional import curry
@@ -12,6 +14,9 @@ class TestSettings(dbsettings.Group):
     string = dbsettings.StringValue()
     list_semi_colon = dbsettings.MultiSeparatorValue()
     list_comma = dbsettings.MultiSeparatorValue(separator=',')
+    date = dbsettings.DateValue()
+    time = dbsettings.TimeValue()
+    datetime = dbsettings.DateTimeValue()
 
 # This is assigned to module, rather than a model
 module_settings = TestSettings()
@@ -24,6 +29,9 @@ class Defaults(models.Model):
         string = dbsettings.StringValue(default="default")
         list_semi_colon = dbsettings.MultiSeparatorValue(default=['one','two'])
         list_comma = dbsettings.MultiSeparatorValue(separator=',',default=('one','two'))
+        date = dbsettings.DateValue(default=datetime.date(2012, 3, 14))
+        time = dbsettings.TimeValue(default=datetime.time(12, 3, 14))
+        datetime = dbsettings.DateTimeValue(default=datetime.datetime(2012, 3, 14, 12, 3, 14))
     settings = settings()
 
 # These will be populated by the fixture data
@@ -57,16 +65,25 @@ class SettingsTestCase(test.TestCase):
         loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'string', 'Ni!')
         loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'list_semi_colon', 'a@b.com;c@d.com;e@f.com')
         loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'list_comma', 'a@b.com,c@d.com,e@f.com')
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'date', '2012-06-28')
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'time', '16:19:17')
+        loading.set_setting_value('dbsettings.tests.tests', 'Populated', 'datetime', '2012-06-28 16:19:17')
         loading.set_setting_value('dbsettings.tests.tests', '', 'boolean', False)
         loading.set_setting_value('dbsettings.tests.tests', '', 'integer', 14)
         loading.set_setting_value('dbsettings.tests.tests', '', 'string', 'Module')
         loading.set_setting_value('dbsettings.tests.tests', '', 'list_semi_colon', 'g@h.com;i@j.com;k@l.com')
         loading.set_setting_value('dbsettings.tests.tests', '', 'list_comma', 'g@h.com,i@j.com,k@l.com')
+        loading.set_setting_value('dbsettings.tests.tests', '', 'date', '2011-05-27')
+        loading.set_setting_value('dbsettings.tests.tests', '', 'time', '15:18:16')
+        loading.set_setting_value('dbsettings.tests.tests', '', 'datetime', '2011-05-27 15:18:16')
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'boolean', False)
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'integer', 1138)
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'string', 'THX')
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'list_semi_colon', 'm@n.com;o@p.com;q@r.com')
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'list_comma', 'm@n.com,o@p.com,q@r.com')
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'date', '2010-04-26')
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'time', '14:17:15')
+        loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'datetime', '2010-04-26 14:17:15')
         loading.set_setting_value('dbsettings.tests.tests', 'Combined', 'enabled', True)
 
     def test_settings(self):
@@ -78,6 +95,9 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Populated.settings.string, 'Ni!')
         self.assertEqual(Populated.settings.list_semi_colon, ['a@b.com', 'c@d.com', 'e@f.com'])
         self.assertEqual(Populated.settings.list_comma, ['a@b.com', 'c@d.com', 'e@f.com'])
+        self.assertEqual(Populated.settings.date, datetime.date(2012, 6, 28))
+        self.assertEqual(Populated.settings.time, datetime.time(16, 19, 17))
+        self.assertEqual(Populated.settings.datetime, datetime.datetime(2012, 6, 28, 16, 19, 17))
 
         # Module settings are kept separate from model settings
         self.assertEqual(module_settings.boolean, False)
@@ -85,6 +105,9 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(module_settings.string, 'Module')
         self.assertEqual(module_settings.list_semi_colon, ['g@h.com', 'i@j.com', 'k@l.com'])
         self.assertEqual(module_settings.list_comma, ['g@h.com', 'i@j.com', 'k@l.com'])
+        self.assertEqual(module_settings.date, datetime.date(2011, 5, 27))
+        self.assertEqual(module_settings.time, datetime.time(15, 18, 16))
+        self.assertEqual(module_settings.datetime, datetime.datetime(2011, 5, 27, 15, 18, 16))
 
         # Settings can be added together
         self.assertEqual(Combined.settings.boolean, False)
@@ -93,6 +116,9 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Combined.settings.enabled, True)
         self.assertEqual(Combined.settings.list_semi_colon, ['m@n.com', 'o@p.com', 'q@r.com'])
         self.assertEqual(Combined.settings.list_comma, ['m@n.com', 'o@p.com', 'q@r.com'])
+        self.assertEqual(Combined.settings.date, datetime.date(2010, 4, 26))
+        self.assertEqual(Combined.settings.time, datetime.time(14, 17, 15))
+        self.assertEqual(Combined.settings.datetime, datetime.datetime(2010, 4, 26, 14, 17, 15))
 
         # Settings not in the database use empty defaults
         self.assertEqual(Unpopulated.settings.boolean, False)
@@ -108,15 +134,18 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Defaults.settings.string, 'default')
         self.assertEqual(Defaults.settings.list_semi_colon, ['one','two'])
         self.assertEqual(Defaults.settings.list_comma, ['one','two'])
+        self.assertEqual(Defaults.settings.date, datetime.date(2012, 3, 14))
+        self.assertEqual(Defaults.settings.time, datetime.time(12, 3, 14))
+        self.assertEqual(Defaults.settings.datetime, datetime.datetime(2012, 3, 14, 12, 3, 14))
 
 
         # Settings should be retrieved in the order of definition
-        self.assertEqual(Populated.settings.keys(), 
+        self.assertEqual(Populated.settings.keys(),
                          ['boolean', 'integer', 'string', 'list_semi_colon',
-                          'list_comma'])
-        self.assertEqual(Combined.settings.keys(), 
+                          'list_comma', 'date', 'time', 'datetime'])
+        self.assertEqual(Combined.settings.keys(),
                          ['boolean', 'integer', 'string', 'list_semi_colon',
-                          'list_comma', 'enabled'])
+                          'list_comma', 'date', 'time', 'datetime', 'enabled'])
 
         # Values should be coerced to the proper Python types
         self.assert_(isinstance(Populated.settings.boolean, bool))
@@ -133,11 +162,19 @@ class SettingsTestCase(test.TestCase):
         loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'string', 'Friday')
         loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'list_semi_colon', 'aa@bb.com;cc@dd.com')
         loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'list_comma', 'aa@bb.com,cc@dd.com')
+        # for date/time you can specify string (as above) or proper object
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'date', datetime.date(1912, 6, 23))
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'time', datetime.time(1, 2, 3))
+        loading.set_setting_value('dbsettings.tests.tests', 'Unpopulated', 'datetime', datetime.datetime(1912, 6, 23, 1, 2, 3))
+
         self.assertEqual(Unpopulated.settings.boolean, True)
         self.assertEqual(Unpopulated.settings.integer, 13)
         self.assertEqual(Unpopulated.settings.string, 'Friday')
         self.assertEqual(Unpopulated.settings.list_semi_colon, ['aa@bb.com', 'cc@dd.com'])
         self.assertEqual(Unpopulated.settings.list_comma, ['aa@bb.com', 'cc@dd.com'])
+        self.assertEqual(Unpopulated.settings.date, datetime.date(1912, 6, 23))
+        self.assertEqual(Unpopulated.settings.time, datetime.time(1, 2, 3))
+        self.assertEqual(Unpopulated.settings.datetime, datetime.datetime(1912, 6, 23, 1, 2, 3))
 
         # Updating settings with defaults
         loading.set_setting_value('dbsettings.tests.tests', 'Defaults', 'boolean', False)
@@ -157,6 +194,9 @@ class SettingsTestCase(test.TestCase):
         Unpopulated.settings.boolean = False
         Unpopulated.settings.integer = 42
         Unpopulated.settings.string = 'Caturday'
+        Unpopulated.settings.date = datetime.date(1939, 9, 1)
+        Unpopulated.settings.time = '03:47:00'
+        Unpopulated.settings.datetime = datetime.datetime(1939, 9, 1, 3, 47, 0)
         # Test correct stripping while we're at it.
         Unpopulated.settings.list_semi_colon = 'ee@ff.com; gg@hh.com'
         Unpopulated.settings.list_comma = 'ee@ff.com ,gg@hh.com'
@@ -164,7 +204,10 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Unpopulated.settings.integer, 42)
         self.assertEqual(Unpopulated.settings.string, 'Caturday')
         self.assertEqual(Unpopulated.settings.list_semi_colon, ['ee@ff.com', 'gg@hh.com'])
-        self.assertEqual(Unpopulated.settings.list_comma, ['ee@ff.com', 'gg@hh.com'])        
+        self.assertEqual(Unpopulated.settings.list_comma, ['ee@ff.com', 'gg@hh.com'])
+        self.assertEqual(Unpopulated.settings.date, datetime.date(1939, 9, 1))
+        self.assertEqual(Unpopulated.settings.time, datetime.time(3, 47, 0))
+        self.assertEqual(Unpopulated.settings.datetime, datetime.datetime(1939, 9, 1, 3, 47, 0))
 
     def test_declaration(self):
         "Group declarations can only contain values and a docstring"
@@ -189,7 +232,7 @@ class SettingsTestCase(test.TestCase):
         "Forms should display only the appropriate settings"
         from django.contrib.auth.models import User, Permission
         from django.core.urlresolvers import reverse
-        
+
         site_form = reverse(views.site_settings)
 
         # Set up a users to test the editor forms
@@ -225,12 +268,18 @@ class SettingsTestCase(test.TestCase):
             'dbsettings.tests.tests__Editable__string': '',
             'dbsettings.tests.tests__Editable__list_semi_colon': '',
             'dbsettings.tests.tests__Editable__list_comma': '',
+            'dbsettings.tests.tests__Editable__date': '3-77-99',
+            'dbsettings.tests.tests__Editable__time': 'abc',
+            'dbsettings.tests.tests__Editable__datetime': '',
         }
         response = self.client.post(site_form, data)
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__integer', 'Enter a whole number.')
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__string', 'This field is required.')
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__list_semi_colon', 'This field is required.')
         self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__list_comma', 'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__date', 'Enter a valid date.')
+        self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__time', 'Enter a valid time.')
+        self.assertFormError(response, 'form', 'dbsettings.tests.tests__Editable__datetime', 'This field is required.')
 
         # Successful submissions should redirect
         data = {
@@ -238,6 +287,9 @@ class SettingsTestCase(test.TestCase):
             'dbsettings.tests.tests__Editable__string': 'Success!',
             'dbsettings.tests.tests__Editable__list_semi_colon': 'jj@kk.com;ll@mm.com',
             'dbsettings.tests.tests__Editable__list_comma': 'jj@kk.com,ll@mm.com',
+            'dbsettings.tests.tests__Editable__date': '2012-06-28',
+            'dbsettings.tests.tests__Editable__time': '16:37:45',
+            'dbsettings.tests.tests__Editable__datetime': '2012-06-28 16:37:45',
         }
         response = self.client.post(site_form, data)
         self.assertRedirects(response, site_form)
@@ -247,3 +299,6 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Editable.settings.string, 'Success!')
         self.assertEqual(Editable.settings.list_semi_colon, ['jj@kk.com', 'll@mm.com'])
         self.assertEqual(Editable.settings.list_comma, ['jj@kk.com', 'll@mm.com'])
+        self.assertEqual(Editable.settings.date, datetime.date(2012, 6, 28))
+        self.assertEqual(Editable.settings.time, datetime.time(16, 37, 45))
+        self.assertEqual(Editable.settings.datetime, datetime.datetime(2012, 6, 28, 16, 37, 45))

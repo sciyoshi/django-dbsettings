@@ -7,6 +7,7 @@ from os.path import join as pjoin
 from django import forms
 from django.conf import settings
 from django.utils.safestring import mark_safe
+from django.utils import formats
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from dbsettings.loading import get_setting_storage, set_setting_value
@@ -16,10 +17,11 @@ try:
 except ImportError:
     from django.utils._decimal import Decimal
 
-__all__ = ['Value', 'BooleanValue', 'DecimalValue', 'EmailValue', 
-           'DurationValue', 'FloatValue', 'IntegerValue', 'PercentValue', 
-           'PositiveIntegerValue', 'StringValue', 'TextValue', 
-           'MultiSeparatorValue', 'ImageValue']
+__all__ = ['Value', 'BooleanValue', 'DecimalValue', 'EmailValue',
+           'DurationValue', 'FloatValue', 'IntegerValue', 'PercentValue',
+           'PositiveIntegerValue', 'StringValue', 'TextValue',
+           'MultiSeparatorValue', 'ImageValue',
+           'DateTimeValue', 'DateValue', 'TimeValue',]
 
 class Value(object):
 
@@ -198,7 +200,7 @@ class MultiSeparatorValue(TextValue):
     """Provides a way to store list-like string settings.
     e.g 'mail@test.com;*@blah.com' would be returned as
         [u'mail@test.com', u'*@blah.com']. What the method
-        uses to split on can be defined by passing in a 
+        uses to split on can be defined by passing in a
         separator string (default is semi-colon as above).
     """
 
@@ -207,13 +209,13 @@ class MultiSeparatorValue(TextValue):
         if default != None:
             # convert from list to string
             default = separator.join(default)
-        super(MultiSeparatorValue, self).__init__(description=description, 
+        super(MultiSeparatorValue, self).__init__(description=description,
                                                   help_text=help_text,
                                                   required=required,
                                                   default=default)
 
     class field(forms.CharField):
-        
+
         class widget(forms.Textarea):
             pass
 
@@ -290,3 +292,59 @@ class ImageValue(Value):
         except IOError:
             return None
 
+
+class DateTimeValue(Value):
+    field = forms.DateTimeField
+    formats_source = 'DATETIME_INPUT_FORMATS'
+
+    @property
+    def _formats(self):
+        return formats.get_format(self.formats_source)
+
+    def _parse_format(self, value):
+        for format in self._formats:
+            try:
+                return datetime.datetime.strptime(value, format)
+            except ValueError:
+                continue
+        return None
+
+    def get_db_prep_save(self, value):
+        if isinstance(value, basestring):
+            return value
+        return value.strftime(self._formats[0])
+
+    def to_python(self, value):
+        if isinstance(value, datetime.datetime):
+            return value
+        return self._parse_format(value)
+
+
+class DateValue(DateTimeValue):
+    field = forms.DateField
+    formats_source = 'DATE_INPUT_FORMATS'
+
+    def to_python(self, value):
+        if isinstance(value, datetime.datetime):
+            return value.date()
+        elif isinstance(value, datetime.date):
+            return value
+        res = self._parse_format(value)
+        if res is not None:
+            return res.date()
+        return res
+
+
+class TimeValue(DateTimeValue):
+    field = forms.TimeField
+    formats_source = 'TIME_INPUT_FORMATS'
+
+    def to_python(self, value):
+        if isinstance(value, datetime.datetime):
+            return value.time()
+        elif isinstance(value, datetime.time):
+            return value
+        res = self._parse_format(value)
+        if res is not None:
+            return res.time()
+        return res

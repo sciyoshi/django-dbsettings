@@ -26,12 +26,12 @@ SETTINGS = {
 
 if DJANGO_VERSION > (1, 2):
     # Post multi-db settings.
-    SETTINGS['DATABASES'] = {                                                                  
-        'default': {                                                               
+    SETTINGS['DATABASES'] = {
+        'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': ':memory:',
-        }                                                                          
-    }     
+        }
+    }
 
 else:
     # Pre multi-db settings.
@@ -41,7 +41,11 @@ else:
 if not settings.configured:
     settings.configure(**SETTINGS)
 
-from django.test.simple import run_tests
+try:
+    from django.test.simple import run_tests
+except ImportError:
+    from django.test.simple import DjangoTestSuiteRunner
+    run_tests = DjangoTestSuiteRunner(verbosity=1, interactive=True).run_tests
 
 
 def runtests(*test_args):

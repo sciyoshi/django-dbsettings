@@ -10,10 +10,10 @@ else:
 setup(
     name = 'dbsettings',
     version = version,
-    description = 'Db settings',
+    description = 'Application settings whose values can be updated while a project is up and running.',
     author = 'Samuel Cormier-Iijima',
     author_email = 'sciyoshi@gmail.com',
-    url = 'http://github.com/alfredo/django-dbsettings',
+    url = 'http://github.com/hdg700/django-dbsettings',
     packages=find_packages(),
     include_package_data=True,
     license='BSD',
