@@ -8,7 +8,7 @@ else:
     version = "%d.%d" % version_tuple[:2]
 
 setup(
-    name = 'dbsettings',
+    name = 'django-dbsettings',
     version = version,
     description = 'Application settings whose values can be updated while a project is up and running.',
     author = 'Samuel Cormier-Iijima',
