@@ -1,22 +1,17 @@
 {% extends "admin/base_site.html" %}
-{% load i18n admin_modify adminmedia %}
-
-
-{% block extrahead %}{{ block.super }}
-{{ media }}
-{% endblock %}
+{% load i18n adminmedia %}
 
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% admin_media_prefix %}css/forms.css" />{% endblock %}
 
 {% block coltype %}colMS{% endblock %}
 {% block bodyclass %}dbsettings{% endblock %}
-{% block userlinks %}<a href="/admin/doc/">{% trans 'Documentation' %}</a> / <a href="/admin/password_change/">{% trans 'Change password' %}</a> / <a href="/admin/logout/">{% trans 'Log out' %}</a>{% endblock %}
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
      <a href="/admin/">{% trans "Home" %}</a> &rsaquo;
      {% trans "Edit Settings" %}
 </div>
 {% endif %}{% endblock %}
+
 {% block content %}
 <div id="content-main">
 {% if form.errors %}
