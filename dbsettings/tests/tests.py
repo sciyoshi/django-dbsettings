@@ -55,7 +55,7 @@ class Combined(models.Model):
     settings = TestSettings() + settings()
 
 class SettingsTestCase(test.TestCase):
-    urls = 'dbsettings.urls'
+    urls = 'dbsettings.tests.test_urls'
 
     def setUp(self):
         # Standard test fixtures don't update the in-memory cache.
