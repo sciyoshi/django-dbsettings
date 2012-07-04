@@ -34,22 +34,7 @@
 						<th>&nbsp;</th>
 					</tr>
 				{% endif %}
-				{% for field in class.list %}
-					{% if field.errors %}
-					<tr class="error">
-						<td colspan="2">{{ field.errors }}</td>
-					</tr>
-					{% endif %}
-					<tr{% if field.errors %} class="error"{% endif %}>
-						<td>
-							{{ field.label_tag }}
-							{% if field.help_text %}
-								<p class="help">{{ field.help_text|escape }}</p>
-							{% endif %}
-						</td>
-						<td>{{ field }}</td>
-					</tr>
-				{% endfor %}
+				{% include "dbsettings/values.html" %}
 			{% endfor %}
 			</table>
 		</div>
