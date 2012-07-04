@@ -7,7 +7,7 @@
 {% block bodyclass %}dbsettings{% endblock %}
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
-     <a href="/admin/">{% trans "Home" %}</a> &rsaquo;
+     <a href="{% url admin:index %}">{% trans "Home" %}</a> &rsaquo;
      {% trans "Edit Settings" %}
 </div>
 {% endif %}{% endblock %}
