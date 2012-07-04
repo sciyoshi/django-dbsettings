@@ -50,10 +50,8 @@ def get_setting_storage(module_name, class_name, attribute_name):
     return storage
 
 def register_setting(setting):
-    if setting not in _settings:
+    if setting.key not in _settings:
         _settings.insert(bisect(list(_settings), setting), setting.key, setting)
-    else:
-        _settings[setting.key] = setting
 
 def set_setting_value(module_name, class_name, attribute_name, value):
     setting = get_setting(module_name, class_name, attribute_name)
