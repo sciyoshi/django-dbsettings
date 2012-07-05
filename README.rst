@@ -121,6 +121,12 @@ lower-case, as it will be capitalized as necessary, automatically.
         sender = dbsettings.StringValue('address to send emails from')
         subject = dbsettings.StringValue()
 
+For more descriptive explanation, the ``help_text`` argument can be used. It
+will be shown in the editor.
+
+The ``default`` argument is very useful - it specify an initial value of the
+setting.
+
 In addition, settings may be supplied with a list of available options, through
 the use of of the ``choices`` argument. This works exactly like the ``choices``
 argument for model fields, and that of the newforms ``ChoiceField``.
@@ -172,9 +178,12 @@ settings.
 Editing settings
 ----------------
 
-When first defined, your settings will default to ``None`` (or ``False``), so
-their values must be set using one of the supplied editors before they can be
-considered useful. The editor will be available at the URL configured earlier.
+When first defined, your settings will default to ``None`` (or ``False`` in
+the case of ``BooleanValue``), so their values must be set using one of the
+supplied editors before they can be considered useful (however, if the setting
+had the ``default`` argument passed in the constructor, its value is already
+useful - equal to the defined default).
+The editor will be available at the URL configured earlier.
 For example, if you used the prefix of ``'settings/'``, the URL ``/settings/``
 will provide an editor of all available settings, while ``/settings/myapp/``
 would contain a list of just the settings for ``myapp``.
@@ -193,8 +202,9 @@ location where it was assigned, and the individual values are attributes of the
 group.
 
 If any settings are referenced without being set to a particular value, they
-will default to ``None`` (or ``False`` in the case of ``BooleanValue``). In the
-following example, assume that ``EmailOptions``were added to the project after
+will default to ``None`` (or ``False`` in the case of ``BooleanValue``, or
+whatever was passed as ``default``). In the
+following example, assume that ``EmailOptions`` were added to the project after
 the ``ImageLimits`` were already defined.
 
 ::
