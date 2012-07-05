@@ -54,6 +54,25 @@ class Combined(models.Model):
         enabled = dbsettings.BooleanValue()
     settings = TestSettings() + settings()
 
+# For registration testing
+class ClashSettings1(dbsettings.Group):
+    clash1 = dbsettings.BooleanValue()
+
+class ClashSettings2(dbsettings.Group):
+    clash2 = dbsettings.BooleanValue()
+
+class ClashSettings1_2(dbsettings.Group):
+    clash1 = dbsettings.IntegerValue()
+    clash2 = dbsettings.IntegerValue()
+
+module_clash1 = ClashSettings1()
+
+class ModelClash(models.Model):
+    settings = ClashSettings1_2()
+
+module_clash2 = ClashSettings2()
+
+
 class SettingsTestCase(test.TestCase):
     urls = 'dbsettings.tests.test_urls'
 
@@ -227,6 +246,20 @@ class SettingsTestCase(test.TestCase):
         # Make sure affect models get the new permissions
         self.assert_('can_edit_populated_settings' in dict(Populated._meta.permissions))
         self.assert_('can_edit_unpopulated_settings' in dict(Unpopulated._meta.permissions))
+
+    def assertCorrectSetting(self, value_class, *key):
+        from dbsettings import loading
+        setting = loading.get_setting(*key)
+        self.assertEqual(key, setting.key)  # Check if setting is registered with proper key
+        self.assertTrue(isinstance(setting, value_class))
+
+    def test_registration(self):
+        "Module and class settings can be mixed up"
+        from dbsettings import BooleanValue, IntegerValue
+        self.assertCorrectSetting(BooleanValue, 'dbsettings.tests.tests', '', 'clash1')
+        self.assertCorrectSetting(IntegerValue, 'dbsettings.tests.tests', 'ModelClash', 'clash1')
+        self.assertCorrectSetting(IntegerValue, 'dbsettings.tests.tests', 'ModelClash', 'clash2')
+        self.assertCorrectSetting(BooleanValue, 'dbsettings.tests.tests', '', 'clash2')
 
     def test_forms(self):
         "Forms should display only the appropriate settings"

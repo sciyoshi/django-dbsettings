@@ -1,7 +1,7 @@
 import sys
 
 from dbsettings.values import Value
-from dbsettings.loading import register_setting
+from dbsettings.loading import register_setting, unregister_setting
 
 __all__ = ['Group']
 
@@ -70,6 +70,7 @@ class Group(object):
         # Override module_name and class_name of all registered settings
         for attr in self.__class__.__dict__.values():
             if isinstance(attr, Value):
+                unregister_setting(attr)
                 attr.module_name = cls.__module__
                 attr.class_name = cls.__name__
                 register_setting(attr)
