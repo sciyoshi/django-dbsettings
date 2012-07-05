@@ -380,3 +380,14 @@ some of the settings provided earlier in this document::
         ('Image', 'maximum_width', 800)
         ('Image', 'maximum_height', 600)
     )
+
+Changelog
+=========
+
+0.2
+    - Fixed errors appearing when module-level and model-level settings have
+      same attribute names
+    - Corrected the editor templates admin integration
+    - Updated README
+0.1
+    Initial PyPI release
