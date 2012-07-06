@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-import os
-import sys
-
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
+from django.core.management import call_command
 
 
 INSTALLED_APPS = (
@@ -15,7 +13,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     # Our app and it's test app.
     'dbsettings',
-    'dbsettings.tests'
 )
 
 SETTINGS = {
@@ -32,7 +29,6 @@ if DJANGO_VERSION > (1, 2):
             'NAME': ':memory:',
         }
     }
-
 else:
     # Pre multi-db settings.
     SETTINGS['DATABASE_ENGINE'] = 'sqlite3'
@@ -41,25 +37,4 @@ else:
 if not settings.configured:
     settings.configure(**SETTINGS)
 
-try:
-    from django.test.simple import run_tests
-except ImportError:
-    from django.test.simple import DjangoTestSuiteRunner
-    run_tests = DjangoTestSuiteRunner(verbosity=1, interactive=True).run_tests
-
-
-def runtests(*test_args):
-    if not test_args:
-        test_args = ['tests']
-    parent = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "..",
-        "..",
-    )
-    sys.path.insert(0, parent)
-    failures = run_tests(test_args, verbosity=1, interactive=True)
-    sys.exit(failures)
-
-
-if __name__ == '__main__':
-    runtests(*sys.argv[1:])
+call_command('test', 'dbsettings')
