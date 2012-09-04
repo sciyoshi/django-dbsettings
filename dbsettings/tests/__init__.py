@@ -335,3 +335,11 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Editable.settings.date, datetime.date(2012, 6, 28))
         self.assertEqual(Editable.settings.time, datetime.time(16, 37, 45))
         self.assertEqual(Editable.settings.datetime, datetime.datetime(2012, 6, 28, 16, 37, 45))
+
+        # Check if module / class settings show properly
+        #perm = Permission.objects.get(codename='can_edit__settings')  # module-level settings
+        #user.user_permissions.add(perm)
+
+        #response = self.client.get(site_form)
+        #self.assertTemplateUsed(response, 'dbsettings/site_settings.html')
+        #self.assertEqual(len(response.context[0]['form'].fields), 14)

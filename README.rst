@@ -384,6 +384,8 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+0.3
+    Included testrunner in distribution
 0.2
     - Fixed errors appearing when module-level and model-level settings have
       same attribute names
