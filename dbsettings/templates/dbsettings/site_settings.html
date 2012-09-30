@@ -25,12 +25,12 @@
 	{% for module in modules %}
 		<div class="module">
 			<table summary="{% filter capfirst %}{% blocktrans with module.grouper as name %}Models available in the {{ name }} application.{% endblocktrans %}{% endfilter %}" width="100%">
-			<caption>{% filter capfirst %}{% blocktrans with module.grouper as name %}{{ name }}{% endblocktrans %}{% endfilter %}</caption>
+			<caption>{% filter capfirst %}{{ module.grouper }}{% endfilter %}</caption>
 			{% regroup module.list by class_name as classes %}
 			{% for class in classes %}
 				{% if class.grouper %}
 					<tr class="alt">
-						<th>{% filter capfirst %}{% blocktrans with class.grouper as name %}{{ name }}{% endblocktrans %}{% endfilter %}</th>
+						<th>{% filter capfirst %}{{ class.grouper }}{% endfilter %}</th>
 						<th>&nbsp;</th>
 					</tr>
 				{% endif %}

@@ -25,7 +25,7 @@
 	{% for class in classes %}
 		<div class="module">
         <table summary="{% filter capfirst %}{% blocktrans with class.grouper as name %}Settings included in the {{ name }} class.{% endblocktrans %}{% endfilter %}" width="100%">
-			<caption>{% filter capfirst %}{% if class.grouper %}{% blocktrans with class.grouper as name %}{{ name }}{% endblocktrans %}{% else %}Application settings{% endif %}{% endfilter %}</caption>
+			<caption>{% filter capfirst %}{% if class.grouper %}{{ class.grouper }}{% else %}{% trans "Application settings" %}{% endif %}{% endfilter %}</caption>
 			{% include "dbsettings/values.html" %}
 			</table>
 		</div>

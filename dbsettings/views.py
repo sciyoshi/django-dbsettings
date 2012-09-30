@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.text import capfirst
+from django.utils.translation import ugettext_lazy as _
 from django.contrib import messages
 
 from dbsettings import loading, forms
@@ -11,10 +12,10 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
     # Determine what set of settings this editor is used for
     if app_label is None:
         settings = loading.get_all_settings()
-        title = 'Site settings'
+        title = _('Site settings')
     else:
         settings = loading.get_app_settings(app_label)
-        title = '%s settings' % capfirst(app_label)
+        title = _('%(app)s settings') % {'app': capfirst(app_label)}
 
     # Create an editor customized for the current user
     editor = forms.customized_editor(request.user, settings)
@@ -43,7 +44,7 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                         location = setting.class_name
                     else:
                         location = setting.module_name
-                    update_msg = u'Updated %s on %s' % (unicode(setting.description), location)
+                    update_msg = _(u'Updated %(desc)s on %(location)s') % {'desc': unicode(setting.description), 'location': location}
                     messages.add_message(request, messages.INFO, update_msg )
 
             return HttpResponseRedirect(request.path)
