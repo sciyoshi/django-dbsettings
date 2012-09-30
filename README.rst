@@ -183,10 +183,13 @@ the case of ``BooleanValue``), so their values must be set using one of the
 supplied editors before they can be considered useful (however, if the setting
 had the ``default`` argument passed in the constructor, its value is already
 useful - equal to the defined default).
+
 The editor will be available at the URL configured earlier.
 For example, if you used the prefix of ``'settings/'``, the URL ``/settings/``
 will provide an editor of all available settings, while ``/settings/myapp/``
 would contain a list of just the settings for ``myapp``.
+
+URL patterns are named: 'site_settings' and 'app_settings', respectively.
 
 The editors are restricted to staff members, and the particular settings that
 will be available to users is based on permissions that are set for them. This

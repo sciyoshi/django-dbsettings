@@ -271,6 +271,9 @@ class SettingsTestCase(test.TestCase):
         # Set up a users to test the editor forms
         user = User.objects.create_user('dbsettings', '', 'dbsettings')
 
+        # Check named url
+        site_form = reverse('site_settings')
+
         # First test without any authenticated user
         response = self.client.get(site_form)
         self.assertTemplateUsed(response, 'admin/login.html')
