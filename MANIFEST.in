@@ -1,2 +1,3 @@
 include README.rst LICENSE AUTHORS runtests.py
 recursive-include dbsettings/templates *.html
+recursive-include dbsettings/locale *.mo *.po
