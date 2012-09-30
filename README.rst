@@ -387,6 +387,9 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+0.4
+    - Named urls
+    - Added polish translation
 0.3
     Included testrunner in distribution
 0.2

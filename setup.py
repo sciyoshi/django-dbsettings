@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 # Dynamically calculate the version based on dbsettings.VERSION
-version_tuple = (0, 3, None)
+version_tuple = (0, 4, None)
 if version_tuple[2] is not None:
     version = "%d.%d_%s" % version_tuple
 else:

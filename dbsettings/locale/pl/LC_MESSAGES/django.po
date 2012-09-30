@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: django-dbsettings 0.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-09-30 18:53+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Jacek Tomaszewski <jacek.tomek@gmail.com>\n"
+"Language: Polish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2)\n"
+
+#: views.py:15
+msgid "Site settings"
+msgstr "Wszystkie ustawienia"
+
+#: views.py:18
+#, python-format
+msgid "%(app)s settings"
+msgstr "Ustawienia %(app)s"
+
+#: views.py:47
+#, python-format
+msgid "Updated %(desc)s on %(location)s"
+msgstr "Uaktualniono '%(desc)s' w %(location)s"
+
+#: templates/dbsettings/app_settings.html:10
+#: templates/dbsettings/site_settings.html:10
+msgid "Home"
+msgstr "Początek"
+
+#: templates/dbsettings/app_settings.html:11
+#: templates/dbsettings/site_settings.html:11
+msgid "Edit Settings"
+msgstr "Zmień ustawienia"
+
+#: templates/dbsettings/app_settings.html:19
+#: templates/dbsettings/site_settings.html:19
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] "Popraw poniższy błąd"
+msgstr[1] "Popraw poniższe błędy"
+msgstr[2] "Popraw poniższe błędy"
+
+#: templates/dbsettings/app_settings.html:27
+#, python-format
+msgid "Settings included in the %(name)s class."
+msgstr "Ustawienia dotyczące klasy %(name)s."
+
+#: templates/dbsettings/app_settings.html:28
+msgid "Application settings"
+msgstr "Ustawienia aplikacji"
+
+#: templates/dbsettings/app_settings.html:36
+#: templates/dbsettings/site_settings.html:45
+msgid "You don't have permission to edit values."
+msgstr "Nie masz uprawnień do edycji ustawień."
+
+#: templates/dbsettings/site_settings.html:27
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr "Modele dostępne w aplikacji %(name)s. ABCDEF"
