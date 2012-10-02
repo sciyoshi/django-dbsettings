@@ -387,15 +387,17 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
-0.4
+**0.4.1** (02/10/2012)
+    - Fixed Image import
+**0.4** (30/09/2012)
     - Named urls
     - Added polish translation
-0.3
+**0.3** (04/09/2012)
     Included testrunner in distribution
-0.2
+**0.2** (05/07/2012)
     - Fixed errors appearing when module-level and model-level settings have
       same attribute names
     - Corrected the editor templates admin integration
     - Updated README
-0.1
+**0.1** (29/06/2012)
     Initial PyPI release
