@@ -1,6 +1,9 @@
 import datetime
 import time
-import Image
+try:
+    from PIL import Image
+except ImportError:
+    import Image
 from hashlib import md5
 from os.path import join as pjoin
 
