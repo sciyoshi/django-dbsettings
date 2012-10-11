@@ -7,8 +7,8 @@
 {% block bodyclass %}dbsettings{% endblock %}
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
-     <a href="{% url admin:index %}">{% trans "Home" %}</a> &rsaquo;
-     {% trans "Edit Settings" %}
+    <a href="{% url admin:index %}">{% trans "Home" %}</a> &rsaquo;
+    {% trans "Edit Settings" %}
 </div>
 {% endif %}{% endblock %}
 
@@ -22,23 +22,23 @@
 {% if form.fields %}
 {% regroup form by module_name as modules %}
 <form enctype="multipart/form-data" method="post">
-	{% for module in modules %}
-		<div class="module">
-			<table summary="{% filter capfirst %}{% blocktrans with module.grouper as name %}Models available in the {{ name }} application.{% endblocktrans %}{% endfilter %}" width="100%">
-			<caption>{% filter capfirst %}{{ module.grouper }}{% endfilter %}</caption>
-			{% regroup module.list by class_name as classes %}
-			{% for class in classes %}
-				{% if class.grouper %}
-					<tr class="alt">
-						<th>{% filter capfirst %}{{ class.grouper }}{% endfilter %}</th>
-						<th>&nbsp;</th>
-					</tr>
-				{% endif %}
-				{% include "dbsettings/values.html" %}
-			{% endfor %}
-			</table>
-		</div>
-	{% endfor %}
+    {% for module in modules %}
+        <div class="module">
+            <table summary="{% filter capfirst %}{% blocktrans with module.grouper as name %}Models available in the {{ name }} application.{% endblocktrans %}{% endfilter %}" width="100%">
+            <caption>{% filter capfirst %}{{ module.grouper }}{% endfilter %}</caption>
+            {% regroup module.list by class_name as classes %}
+            {% for class in classes %}
+                {% if class.grouper %}
+                    <tr class="alt">
+                        <th>{% filter capfirst %}{{ class.grouper }}{% endfilter %}</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                {% endif %}
+                {% include "dbsettings/values.html" %}
+            {% endfor %}
+            </table>
+        </div>
+    {% endfor %}
 {% csrf_token %}<input type="submit" value="Save" class="default" />
 </form>
 {% else %}

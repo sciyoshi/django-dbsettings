@@ -7,8 +7,8 @@
 {% block bodyclass %}dbsettings{% endblock %}
 {% block breadcrumbs %}{% if not is_popup %}
 <div class="breadcrumbs">
-     <a href="{% url admin:index %}">{% trans "Home" %}</a> &rsaquo;
-     {% trans "Edit Settings" %}
+    <a href="{% url admin:index %}">{% trans "Home" %}</a> &rsaquo;
+    {% trans "Edit Settings" %}
 </div>
 {% endif %}{% endblock %}
 
@@ -22,14 +22,14 @@
 {% if form.fields %}
 {% regroup form by class_name as classes %}
 <form enctype="multipart/form-data" method="post">
-	{% for class in classes %}
-		<div class="module">
+    {% for class in classes %}
+        <div class="module">
         <table summary="{% filter capfirst %}{% blocktrans with class.grouper as name %}Settings included in the {{ name }} class.{% endblocktrans %}{% endfilter %}" width="100%">
-			<caption>{% filter capfirst %}{% if class.grouper %}{{ class.grouper }}{% else %}{% trans "Application settings" %}{% endif %}{% endfilter %}</caption>
-			{% include "dbsettings/values.html" %}
-			</table>
-		</div>
-	{% endfor %}
+            <caption>{% filter capfirst %}{% if class.grouper %}{{ class.grouper }}{% else %}{% trans "Application settings" %}{% endif %}{% endfilter %}</caption>
+            {% include "dbsettings/values.html" %}
+            </table>
+        </div>
+    {% endfor %}
 {% csrf_token %}<input type="submit" value="Save" class="default" />
 </form>
 {% else %}
