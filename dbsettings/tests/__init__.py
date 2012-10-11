@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from django import test
 from django.utils.functional import curry
+from django.utils.translation import activate, deactivate
 
 import dbsettings
 from dbsettings import loading, views
@@ -75,6 +76,15 @@ module_clash2 = ClashSettings2()
 
 class SettingsTestCase(test.TestCase):
     urls = 'dbsettings.tests.test_urls'
+
+    @classmethod
+    def setUpClass(cls):
+        # Since some text assertions are performed, make sure that no translation interrupts.
+        activate('en')
+
+    @classmethod
+    def tearDownClass(cls):
+        deactivate()
 
     def setUp(self):
         # Standard test fixtures don't update the in-memory cache.
