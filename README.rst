@@ -394,6 +394,10 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**0.5** (11/10/2012)
+    - Fixed error occuring when test are run with ``LANGUAGE_CODE`` different than 'en'
+    - Added verbose_name option for Groups
+    - Cleaned code
 **0.4.1** (02/10/2012)
     - Fixed Image import
 **0.4** (30/09/2012)
