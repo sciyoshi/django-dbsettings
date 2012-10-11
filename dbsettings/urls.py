@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('dbsettings.views',
     url(r'^$', 'site_settings', name='site_settings'),

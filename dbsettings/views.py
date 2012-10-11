@@ -8,6 +8,8 @@ from django.contrib import messages
 
 from dbsettings import loading, forms
 
+
+@staff_member_required
 def app_settings(request, app_label, template='dbsettings/app_settings.html'):
     # Determine what set of settings this editor is used for
     if app_label is None:
@@ -27,7 +29,7 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
             form.full_clean()
 
             for name, value in form.cleaned_data.items():
-                key = forms.re_field_name.match(name).groups()
+                key = forms.RE_FIELD_NAME.match(name).groups()
                 setting = loading.get_setting(*key)
                 try:
                     storage = loading.get_setting_storage(*key)
@@ -44,8 +46,9 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                         location = setting.class_name
                     else:
                         location = setting.module_name
-                    update_msg = _(u'Updated %(desc)s on %(location)s') % {'desc': unicode(setting.description), 'location': location}
-                    messages.add_message(request, messages.INFO, update_msg )
+                    update_msg = (_(u'Updated %(desc)s on %(location)s') %
+                                  {'desc': unicode(setting.description), 'location': location})
+                    messages.add_message(request, messages.INFO, update_msg)
 
             return HttpResponseRedirect(request.path)
     else:
@@ -56,7 +59,7 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
         'title': title,
         'form': form,
     }, context_instance=RequestContext(request))
-app_settings = staff_member_required(app_settings)
+
 
 # Site-wide setting editor is identical, but without an app_label
 def site_settings(request):
