@@ -142,6 +142,9 @@ location where they will be referenced later. This is as simple as instantiating
 the settings group in the appropriate location. This may be at the module level
 or within any standard Django model.
 
+Group instance may receive one optional argument: verbose name of the group.
+This name will be displayed in the editor.
+
 ::
 
     email = EmailOptions()
@@ -150,12 +153,16 @@ or within any standard Django model.
         image = models.ImageField(upload_to='/upload/path')
         caption = models.TextField()
 
-        limits = ImageLimits()
+        limits = ImageLimits('Dimension settings')
 
 Multiple groups may be assigned to the same module or model, and they can even
 be combined into a single group by using standard addition syntax::
 
     options = EmailOptions() + ImageLimits()
+
+To separate and tag settings nicely in the editor, use verbose names::
+
+    options = EmailOptions('Email') + ImageLimits('Dimesions')
 
 Database setup
 --------------

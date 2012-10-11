@@ -33,12 +33,14 @@ class SettingsEditor(forms.BaseForm):
             if model:
                 class_name = model._meta.verbose_name
         field.class_name = class_name
+        field.verbose_name = self.verbose_names[field.name]
 
         return field
 
 def customized_editor(user, settings):
     "Customize the setting editor based on the current user and setting list"
     base_fields = SortedDict()
+    verbose_names = {}
     for setting in settings:
         perm = '%s.can_edit_%s_settings' % (
             setting.module_name.split('.')[-2],
@@ -58,8 +60,10 @@ def customized_editor(user, settings):
                 field = forms.ChoiceField(choices=setting.choices, **kwargs)
             else:
                 field = setting.field(**kwargs)
-            base_fields['%s__%s__%s' % setting.key] = field
-    return type('SettingsEditor', (SettingsEditor,), {'base_fields': base_fields})
+            key = '%s__%s__%s' % setting.key
+            base_fields[key] = field
+            verbose_names[key] = setting.verbose_name
+    return type('SettingsEditor', (SettingsEditor,), {'base_fields': base_fields, 'verbose_names': verbose_names})
 
 def get_initial_values(user, settings):
     "Returns initial values for the form"

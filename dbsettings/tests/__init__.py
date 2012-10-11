@@ -48,7 +48,7 @@ class Blankable(models.Model):
     settings = TestSettings()
 
 class Editable(models.Model):
-    settings = TestSettings()
+    settings = TestSettings('Verbose name')
 
 class Combined(models.Model):
     class settings(dbsettings.Group):
@@ -307,6 +307,10 @@ class SettingsTestCase(test.TestCase):
         # Add permissions so that settings will show up
         perm = Permission.objects.get(codename='can_edit_editable_settings')
         user.user_permissions.add(perm)
+
+        # Check if verbose_name appears
+        response = self.client.get(site_form)
+        self.assertContains(response, 'Verbose name')
 
         # Erroneous submissions should be caught by newforms
         data = {

@@ -38,7 +38,7 @@ class GroupDescriptor(object):
 class Group(object):
     __metaclass__ = GroupBase
 
-    def __new__(cls, copy=True):
+    def __new__(cls, verbose_name=None, copy=True):
         # If not otherwise provided, set the module to where it was executed
         if '__module__' in cls.__dict__:
             module_name = cls.__dict__['__module__']
@@ -53,6 +53,8 @@ class Group(object):
         for key, attr in attrs:
             attr.creation_counter = Value.creation_counter
             Value.creation_counter += 1
+            if not hasattr(attr, 'verbose_name'):
+                attr.verbose_name = verbose_name
             register_setting(attr)
 
         attr_dict = dict(attrs + [('__module__', module_name)])

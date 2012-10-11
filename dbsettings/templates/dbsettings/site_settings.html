@@ -28,12 +28,10 @@
             <caption>{% filter capfirst %}{{ module.grouper }}{% endfilter %}</caption>
             {% regroup module.list by class_name as classes %}
             {% for class in classes %}
-                {% if class.grouper %}
-                    <tr class="alt">
-                        <th>{% filter capfirst %}{{ class.grouper }}{% endfilter %}</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                {% endif %}
+                <tr class="alt">
+                    <th>{% filter capfirst %}{% if class.grouper %}{{ class.grouper }}{% else %}{% trans "Application settings" %}{% endif %}{% endfilter %}</th>
+                    <th>&nbsp;</th>
+                </tr>
                 {% include "dbsettings/values.html" %}
             {% endfor %}
             </table>
