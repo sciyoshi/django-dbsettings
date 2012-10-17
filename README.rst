@@ -1,5 +1,3 @@
-(ImageValue included)
-
 ================================
 Storing settings in the database
 ================================
@@ -390,6 +388,8 @@ some of the settings provided earlier in this document::
         ('Image', 'maximum_width', 800)
         ('Image', 'maximum_height', 600)
     )
+
+----------
 
 Changelog
 =========
