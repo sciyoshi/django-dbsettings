@@ -20,16 +20,6 @@ class GroupBase(type):
         super(GroupBase, mcs).__init__(name, bases, attrs)
 
 
-def install_permission(cls, permission):
-    if permission not in cls._meta.permissions:
-        # Add a permission for the setting editor
-        try:
-            cls._meta.permissions.append(permission)
-        except AttributeError:
-            # Permissions were supplied as a tuple, so preserve that
-            cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
-
-
 class GroupDescriptor(object):
     def __init__(self, group, attribute_name):
         self.group = group

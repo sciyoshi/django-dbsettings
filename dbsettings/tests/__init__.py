@@ -353,10 +353,19 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Editable.settings.time, datetime.time(16, 37, 45))
         self.assertEqual(Editable.settings.datetime, datetime.datetime(2012, 6, 28, 16, 37, 45))
 
-        # Check if module / class settings show properly
-        #perm = Permission.objects.get(codename='can_edit__settings')  # module-level settings
-        #user.user_permissions.add(perm)
+        # Check if module level settings show properly
+        self._test_form_fields(site_form, 8, False)
+        # Add perm for whole app
+        perm = Permission.objects.get(codename='can_edit__settings')  # module-level settings
+        user.user_permissions.add(perm)
+        self._test_form_fields(site_form, 18)
+        # Remove other perms - left only global perm
+        perm = Permission.objects.get(codename='can_edit_editable_settings')
+        user.user_permissions.remove(perm)
+        self._test_form_fields(site_form, 10)
 
-        #response = self.client.get(site_form)
-        #self.assertTemplateUsed(response, 'dbsettings/site_settings.html')
-        #self.assertEqual(len(response.context[0]['form'].fields), 14)
+    def _test_form_fields(self, url, fields_num, present=True, variable_name='form'):
+        global_setting = 'dbsettings.tests____clash2'  # Some global setting name
+        response = self.client.get(url)
+        self.assertEqual(present, global_setting in response.context[0][variable_name].fields.keys())
+        self.assertEqual(len(response.context[0][variable_name].fields), fields_num)
