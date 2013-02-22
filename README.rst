@@ -353,6 +353,19 @@ User input will be parsed according to ``TIME_INPUT_FORMATS`` setting.
 
 See ``DateTimeValue`` for the remark about assigning.
 
+ImageValue
+----------
+
+(requires PIL or Pillow imaging library to work)
+
+Allows to upload image and view its preview.
+
+ImageValue has optional ``upload_to`` keyword, which specify path
+(relative to ``MEDIA_ROOT``), where uploaded images will be stored.
+If keyword is not present, files will be saved directly under
+``MEDIA_ROOT``.
+
+
 Setting defaults for a distributed application
 ==============================================
 
@@ -394,6 +407,9 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**dev**
+    - Fixed permissions: added permission for editing non-model (module-level) settings
+    - Make PIL/Pillow not required in setup.py
 **0.5** (11/10/2012)
     - Fixed error occuring when test are run with ``LANGUAGE_CODE`` different than 'en'
     - Added verbose_name option for Groups
