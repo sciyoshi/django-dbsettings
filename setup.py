@@ -24,7 +24,6 @@ setup(
     include_package_data=True,
     license='BSD',
     install_requires=(
-        'PIL',
     ),
     classifiers=[
         'Development Status :: 4 - Beta',
