@@ -236,7 +236,7 @@ class MultiSeparatorValue(TextValue):
         if value:
             value = unicode(value)
             value = value.split(self.separator)
-            value = [x.strip() for x in value]
+            value = filter(None, (x.strip() for x in value))
         else:
             value = []
         return value
