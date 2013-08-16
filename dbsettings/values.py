@@ -316,7 +316,7 @@ class DateTimeValue(Value):
         for format in self._formats:
             try:
                 return datetime.datetime.strptime(value, format)
-            except ValueError:
+            except (ValueError, TypeError):
                 continue
         return None
 
