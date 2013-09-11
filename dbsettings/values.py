@@ -173,7 +173,9 @@ class PercentValue(Value):
                 # Place a percent sign after a smaller text field
                 attrs = kwargs.pop('attrs', {})
                 attrs['size'] = attrs['max_length'] = 6
-                return forms.TextInput.render(self, attrs=attrs, *args, **kwargs) + '%'
+                return mark_safe(
+                    forms.TextInput.render(self, attrs=attrs, *args, **kwargs) +
+                    '<span style="vertical-align: middle;">&nbsp;%</span>')
 
     def to_python(self, value):
         return Decimal(value) / 100
