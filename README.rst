@@ -22,6 +22,21 @@ will be used to represent the settings that are stored in the database. Then,
 the settings may edited at run-time using the provided editor, and all Python
 code in your application that uses the setting will receive the updated value.
 
+Requirements
+============
+
++------------------+------------+--------------+
+| Dbsettings       | Python     | Django       |
++==================+============+==============+
+| >=0.6            | 3.2        |       1.5    |
+|                  +------------+--------------+
+|                  | 2.6 - 2.7  | 1.3 - 1.5    |
++------------------+------------+--------------+
+| <=0.5            | 2.6 - 2.7  | 1.2\* - 1.4  |
++------------------+------------+--------------+
+
+\* Possibly version below 1.2 will work too, but not tested.
+
 Installation
 ============
 
@@ -407,7 +422,8 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
-**dev**
+**0.6**
+    - Added compatibility with Django 1.5 and python3, dropped support for Django 1.2.
     - Fixed permissions: added permission for editing non-model (module-level) settings
     - Make PIL/Pillow not required in setup.py
 **0.5** (11/10/2012)
