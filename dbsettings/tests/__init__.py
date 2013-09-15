@@ -1,3 +1,4 @@
+import six
 import datetime
 
 from django.db import models
@@ -179,7 +180,7 @@ class SettingsTestCase(test.TestCase):
         # Values should be coerced to the proper Python types
         self.assertTrue(isinstance(Populated.settings.boolean, bool))
         self.assertTrue(isinstance(Populated.settings.integer, int))
-        self.assertTrue(isinstance(Populated.settings.string, basestring))
+        self.assertTrue(isinstance(Populated.settings.string, six.string_types))
 
         # Settings can not be accessed directly from models, only instances
         self.assertRaises(AttributeError, lambda: Populated().settings)

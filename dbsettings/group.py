@@ -1,4 +1,5 @@
 import sys
+import six
 
 from dbsettings.values import Value
 from dbsettings.loading import register_setting, unregister_setting
@@ -32,8 +33,8 @@ class GroupDescriptor(object):
         return self.group
 
 
+@six.add_metaclass(GroupBase)
 class Group(object):
-    __metaclass__ = GroupBase
 
     def __new__(cls, verbose_name=None, copy=True):
         # If not otherwise provided, set the module to where it was executed
@@ -45,7 +46,7 @@ class Group(object):
         attrs = [(k, v) for (k, v) in cls.__dict__.items() if isinstance(v, Value)]
         if copy:
             attrs = [(k, v.copy()) for (k, v) in attrs]
-        attrs.sort(lambda a, b: cmp(a[1], b[1]))
+        attrs.sort(key=lambda a: a[1])
 
         for _, attr in attrs:
             attr.creation_counter = Value.creation_counter

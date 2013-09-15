@@ -13,14 +13,14 @@ def mk_permissions(permissions, appname, verbosity):
     ct, created = ContentType.objects.get_or_create(model='', app_label=appname,
                                                     defaults={'name': appname})
     if created and verbosity >= 2:
-        print "Adding custom content type '%s'" % ct
+        print("Adding custom content type '%s'" % ct)
     # create permissions
     for codename, name in permissions:
         p, created = Permission.objects.get_or_create(codename=codename,
                                                       content_type__pk=ct.id,
                                                       defaults={'name': name, 'content_type': ct})
         if created and verbosity >= 2:
-            print "Adding custom permission '%s'" % p
+            print("Adding custom permission '%s'" % p)
 
 
 def handler(sender, **kwargs):

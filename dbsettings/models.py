@@ -17,7 +17,7 @@ class Setting(models.Model):
 
     objects = SettingManager()
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.pk is not None
 
     def save(self, *args, **kwargs):

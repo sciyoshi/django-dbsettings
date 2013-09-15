@@ -13,7 +13,7 @@ class SettingDict(SortedDict):
     "Sorted dict that has a bit more list-type functionality"
 
     def __iter__(self):
-        return self.itervalues()
+        return iter(self.values())
 
 _settings = SettingDict()
 
