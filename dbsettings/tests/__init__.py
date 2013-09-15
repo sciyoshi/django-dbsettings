@@ -177,9 +177,9 @@ class SettingsTestCase(test.TestCase):
                           'list_comma', 'date', 'time', 'datetime', 'enabled'])
 
         # Values should be coerced to the proper Python types
-        self.assert_(isinstance(Populated.settings.boolean, bool))
-        self.assert_(isinstance(Populated.settings.integer, int))
-        self.assert_(isinstance(Populated.settings.string, basestring))
+        self.assertTrue(isinstance(Populated.settings.boolean, bool))
+        self.assertTrue(isinstance(Populated.settings.integer, int))
+        self.assertTrue(isinstance(Populated.settings.string, basestring))
 
         # Settings can not be accessed directly from models, only instances
         self.assertRaises(AttributeError, lambda: Populated().settings)
@@ -254,8 +254,8 @@ class SettingsTestCase(test.TestCase):
         self.assertRaises(TypeError, curry(type, 'BadGroup', (dbsettings.Group,), attrs))
 
         # Make sure affect models get the new permissions
-        self.assert_('can_edit_populated_settings' in dict(Populated._meta.permissions))
-        self.assert_('can_edit_unpopulated_settings' in dict(Unpopulated._meta.permissions))
+        self.assertTrue('can_edit_populated_settings' in dict(Populated._meta.permissions))
+        self.assertTrue('can_edit_unpopulated_settings' in dict(Unpopulated._meta.permissions))
 
     def assertCorrectSetting(self, value_class, *key):
         from dbsettings import loading
