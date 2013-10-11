@@ -12,12 +12,13 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import formats
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 from dbsettings.loading import get_setting_storage, set_setting_value
 
 __all__ = ['Value', 'BooleanValue', 'DecimalValue', 'EmailValue',
            'DurationValue', 'FloatValue', 'IntegerValue', 'PercentValue',
-           'PositiveIntegerValue', 'StringValue', 'TextValue',
+           'PositiveIntegerValue', 'StringValue', 'TextValue', 'PasswordValue',
            'MultiSeparatorValue', 'ImageValue',
            'DateTimeValue', 'DateValue', 'TimeValue']
 
@@ -207,6 +208,23 @@ class EmailValue(Value):
 
     def to_python(self, value):
         return six.text_type(value)
+
+
+class PasswordValue(Value):
+    class field(forms.CharField):
+        widget = forms.PasswordInput
+
+        def __init__(self, **kwargs):
+            if not kwargs.get('help_text'):
+                kwargs['help_text'] = _(
+                    'Leave empty in order to retain old password. Provide new value to change.')
+            forms.CharField.__init__(self, **kwargs)
+
+        def clean(self, value):
+            # Retain old password if not changed
+            if value == '':
+                value = self.initial
+            return forms.CharField.clean(self, value)
 
 
 class MultiSeparatorValue(TextValue):

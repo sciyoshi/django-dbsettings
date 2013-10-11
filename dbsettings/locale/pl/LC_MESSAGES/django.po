@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-dbsettings 0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-30 18:53+0200\n"
+"POT-Creation-Date: 2013-10-11 11:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Jacek Tomaszewski <jacek.tomek@gmail.com>\n"
 "Language: Polish\n"
@@ -18,53 +18,59 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2)\n"
 
-#: views.py:15
+#: values.py:220
+msgid ""
+"Leave empty in order to retain old password. Provide new value to change."
+msgstr "Pozostaw pole puste, by nie zmieniać hasła. Wpisz nową wartość, by zmienić."
+
+#: views.py:20
 msgid "Site settings"
 msgstr "Wszystkie ustawienia"
 
-#: views.py:18
+#: views.py:23
 #, python-format
 msgid "%(app)s settings"
 msgstr "Ustawienia %(app)s"
 
-#: views.py:47
+#: views.py:52
 #, python-format
 msgid "Updated %(desc)s on %(location)s"
 msgstr "Uaktualniono '%(desc)s' w %(location)s"
 
-#: templates/dbsettings/app_settings.html:10
-#: templates/dbsettings/site_settings.html:10
+#: templates/dbsettings/app_settings.html:11
+#: templates/dbsettings/site_settings.html:11
 msgid "Home"
 msgstr "Początek"
 
-#: templates/dbsettings/app_settings.html:11
-#: templates/dbsettings/site_settings.html:11
+#: templates/dbsettings/app_settings.html:12
+#: templates/dbsettings/site_settings.html:12
 msgid "Edit Settings"
 msgstr "Zmień ustawienia"
 
-#: templates/dbsettings/app_settings.html:19
-#: templates/dbsettings/site_settings.html:19
+#: templates/dbsettings/app_settings.html:20
+#: templates/dbsettings/site_settings.html:20
 msgid "Please correct the error below."
 msgid_plural "Please correct the errors below."
 msgstr[0] "Popraw poniższy błąd"
 msgstr[1] "Popraw poniższe błędy"
 msgstr[2] "Popraw poniższe błędy"
 
-#: templates/dbsettings/app_settings.html:27
+#: templates/dbsettings/app_settings.html:28
 #, python-format
 msgid "Settings included in the %(name)s class."
 msgstr "Ustawienia dotyczące klasy %(name)s."
 
-#: templates/dbsettings/app_settings.html:28
+#: templates/dbsettings/app_settings.html:29
+#: templates/dbsettings/site_settings.html:33
 msgid "Application settings"
 msgstr "Ustawienia aplikacji"
 
-#: templates/dbsettings/app_settings.html:36
-#: templates/dbsettings/site_settings.html:45
+#: templates/dbsettings/app_settings.html:37
+#: templates/dbsettings/site_settings.html:44
 msgid "You don't have permission to edit values."
 msgstr "Nie masz uprawnień do edycji ustawień."
 
-#: templates/dbsettings/site_settings.html:27
+#: templates/dbsettings/site_settings.html:28
 #, python-format
 msgid "Models available in the %(name)s application."
 msgstr "Modele dostępne w aplikacji %(name)s. ABCDEF"

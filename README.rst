@@ -382,6 +382,11 @@ ImageValue has optional ``upload_to`` keyword, which specify path
 If keyword is not present, files will be saved directly under
 ``MEDIA_ROOT``.
 
+PasswordValue
+-------------
+
+Presents a standard password input. Retain old setting value if not changed.
+
 
 Setting defaults for a distributed application
 ==============================================
@@ -424,6 +429,8 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**dev**
+    - Added PasswordValue
 **0.6**
     - Added compatibility with Django 1.5 and python3, dropped support for Django 1.2.
     - Fixed permissions: added permission for editing non-model (module-level) settings
