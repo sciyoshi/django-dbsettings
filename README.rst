@@ -26,7 +26,9 @@ Installation
 ============
 
 To install the ``dbsettings`` package, simply place it anywhere on your
-``PYTHONPATH``.
+``PYTHONPATH``.  Or, if you use virtualenv and pip you can do
+
+    pip install -e git+git@github.com:sciyoshi/django-dbsettings.git@master#egg=django-dbsettings
 
 Project settings
 ----------------
