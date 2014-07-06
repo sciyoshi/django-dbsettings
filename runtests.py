@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import django
 from django.conf import settings
 from django.core.management import call_command
 
@@ -28,5 +29,8 @@ SETTINGS = {
 
 if not settings.configured:
     settings.configure(**SETTINGS)
+
+if django.VERSION >= (1, 7):
+        django.setup()
 
 call_command('test', 'dbsettings')
