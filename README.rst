@@ -30,7 +30,13 @@ Requirements
 +------------------+------------+--------------+
 | Dbsettings       | Python     | Django       |
 +==================+============+==============+
-| >=0.6            | 3.2        |       1.5    |
+| >=0.7            | 3.2        | 1.5 - 1.7    |
+|                  +------------+--------------+
+|                  | 2.7        | 1.3 - 1.7    |
+|                  +------------+--------------+
+|                  | 2.6        | 1.3 - 1.6    |
++------------------+------------+--------------+
+| ==0.6            | 3.2        |       1.5    |
 |                  +------------+--------------+
 |                  | 2.6 - 2.7  | 1.3 - 1.5    |
 +------------------+------------+--------------+
@@ -429,8 +435,9 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
-**dev**
+**0.7**
     - Added PasswordValue
+    - Added compatibility with Django 1.6 and 1.7.
 **0.6**
     - Added compatibility with Django 1.5 and python3, dropped support for Django 1.2.
     - Fixed permissions: added permission for editing non-model (module-level) settings
