@@ -5,7 +5,8 @@ except ImportError:
     from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     (r'^admin/', include(admin.site.urls)),
     (r'^settings/', include('dbsettings.urls')),
 )

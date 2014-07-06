@@ -1,5 +1,3 @@
-from bisect import bisect
-
 from collections import OrderedDict
 from django.core.cache import cache
 

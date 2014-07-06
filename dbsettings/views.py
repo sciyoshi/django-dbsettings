@@ -50,7 +50,8 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                     else:
                         location = setting.module_name
                     update_msg = (_('Updated %(desc)s on %(location)s') %
-                                  {'desc': six.text_type(setting.description), 'location': location})
+                                  {'desc': six.text_type(setting.description),
+                                   'location': location})
                     messages.add_message(request, messages.INFO, update_msg)
 
             return HttpResponseRedirect(request.path)

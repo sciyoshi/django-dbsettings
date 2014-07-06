@@ -9,6 +9,7 @@ from django.utils.translation import activate, deactivate
 import dbsettings
 from dbsettings import loading, views
 
+
 # Set up some settings to test
 class TestSettings(dbsettings.Group):
     boolean = dbsettings.BooleanValue()
@@ -23,51 +24,61 @@ class TestSettings(dbsettings.Group):
 # This is assigned to module, rather than a model
 module_settings = TestSettings()
 
+
 class Defaults(models.Model):
     class settings(dbsettings.Group):
         boolean = dbsettings.BooleanValue(default=True)
         boolean_false = dbsettings.BooleanValue(default=False)
         integer = dbsettings.IntegerValue(default=1)
         string = dbsettings.StringValue(default="default")
-        list_semi_colon = dbsettings.MultiSeparatorValue(default=['one','two'])
-        list_comma = dbsettings.MultiSeparatorValue(separator=',',default=('one','two'))
+        list_semi_colon = dbsettings.MultiSeparatorValue(default=['one', 'two'])
+        list_comma = dbsettings.MultiSeparatorValue(separator=',', default=('one', 'two'))
         date = dbsettings.DateValue(default=datetime.date(2012, 3, 14))
         time = dbsettings.TimeValue(default=datetime.time(12, 3, 14))
         datetime = dbsettings.DateTimeValue(default=datetime.datetime(2012, 3, 14, 12, 3, 14))
     settings = settings()
 
+
 # These will be populated by the fixture data
 class Populated(models.Model):
     settings = TestSettings()
+
 
 # These will be empty after startup
 class Unpopulated(models.Model):
     settings = TestSettings()
 
+
 # These will allow blank values
 class Blankable(models.Model):
     settings = TestSettings()
 
+
 class Editable(models.Model):
     settings = TestSettings('Verbose name')
+
 
 class Combined(models.Model):
     class settings(dbsettings.Group):
         enabled = dbsettings.BooleanValue()
     settings = TestSettings() + settings()
 
+
 # For registration testing
 class ClashSettings1(dbsettings.Group):
     clash1 = dbsettings.BooleanValue()
 
+
 class ClashSettings2(dbsettings.Group):
     clash2 = dbsettings.BooleanValue()
+
 
 class ClashSettings1_2(dbsettings.Group):
     clash1 = dbsettings.IntegerValue()
     clash2 = dbsettings.IntegerValue()
 
 module_clash1 = ClashSettings1()
+
 
 class ModelClash(models.Model):
     settings = ClashSettings1_2()
@@ -93,15 +104,19 @@ class SettingsTestCase(test.TestCase):
         loading.set_setting_value('dbsettings.tests', 'Populated', 'boolean', True)
         loading.set_setting_value('dbsettings.tests', 'Populated', 'integer', 42)
         loading.set_setting_value('dbsettings.tests', 'Populated', 'string', 'Ni!')
-        loading.set_setting_value('dbsettings.tests', 'Populated', 'list_semi_colon', 'a@b.com;c@d.com;e@f.com')
-        loading.set_setting_value('dbsettings.tests', 'Populated', 'list_comma', 'a@b.com,c@d.com,e@f.com')
+        loading.set_setting_value('dbsettings.tests', 'Populated', 'list_semi_colon',
+                                  'a@b.com;c@d.com;e@f.com')
+        loading.set_setting_value('dbsettings.tests', 'Populated', 'list_comma',
+                                  'a@b.com,c@d.com,e@f.com')
         loading.set_setting_value('dbsettings.tests', 'Populated', 'date', '2012-06-28')
         loading.set_setting_value('dbsettings.tests', 'Populated', 'time', '16:19:17')
-        loading.set_setting_value('dbsettings.tests', 'Populated', 'datetime', '2012-06-28 16:19:17')
+        loading.set_setting_value('dbsettings.tests', 'Populated', 'datetime',
+                                  '2012-06-28 16:19:17')
         loading.set_setting_value('dbsettings.tests', '', 'boolean', False)
         loading.set_setting_value('dbsettings.tests', '', 'integer', 14)
         loading.set_setting_value('dbsettings.tests', '', 'string', 'Module')
-        loading.set_setting_value('dbsettings.tests', '', 'list_semi_colon', 'g@h.com;i@j.com;k@l.com')
+        loading.set_setting_value('dbsettings.tests', '', 'list_semi_colon',
+                                  'g@h.com;i@j.com;k@l.com')
         loading.set_setting_value('dbsettings.tests', '', 'list_comma', 'g@h.com,i@j.com,k@l.com')
         loading.set_setting_value('dbsettings.tests', '', 'date', '2011-05-27')
         loading.set_setting_value('dbsettings.tests', '', 'time', '15:18:16')
@@ -109,8 +124,10 @@ class SettingsTestCase(test.TestCase):
         loading.set_setting_value('dbsettings.tests', 'Combined', 'boolean', False)
         loading.set_setting_value('dbsettings.tests', 'Combined', 'integer', 1138)
         loading.set_setting_value('dbsettings.tests', 'Combined', 'string', 'THX')
-        loading.set_setting_value('dbsettings.tests', 'Combined', 'list_semi_colon', 'm@n.com;o@p.com;q@r.com')
-        loading.set_setting_value('dbsettings.tests', 'Combined', 'list_comma', 'm@n.com,o@p.com,q@r.com')
+        loading.set_setting_value('dbsettings.tests', 'Combined', 'list_semi_colon',
+                                  'm@n.com;o@p.com;q@r.com')
+        loading.set_setting_value('dbsettings.tests', 'Combined', 'list_comma',
+                                  'm@n.com,o@p.com,q@r.com')
         loading.set_setting_value('dbsettings.tests', 'Combined', 'date', '2010-04-26')
         loading.set_setting_value('dbsettings.tests', 'Combined', 'time', '14:17:15')
         loading.set_setting_value('dbsettings.tests', 'Combined', 'datetime', '2010-04-26 14:17:15')
@@ -157,17 +174,16 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Unpopulated.settings.list_semi_colon, [])
         self.assertEqual(Unpopulated.settings.list_comma, [])
 
-        # ...Unless a default paramter was specified, then they use that
+        # ...Unless a default parameter was specified, then they use that
         self.assertEqual(Defaults.settings.boolean, True)
         self.assertEqual(Defaults.settings.boolean_false, False)
         self.assertEqual(Defaults.settings.integer, 1)
         self.assertEqual(Defaults.settings.string, 'default')
-        self.assertEqual(Defaults.settings.list_semi_colon, ['one','two'])
-        self.assertEqual(Defaults.settings.list_comma, ['one','two'])
+        self.assertEqual(Defaults.settings.list_semi_colon, ['one', 'two'])
+        self.assertEqual(Defaults.settings.list_comma, ['one', 'two'])
         self.assertEqual(Defaults.settings.date, datetime.date(2012, 3, 14))
         self.assertEqual(Defaults.settings.time, datetime.time(12, 3, 14))
         self.assertEqual(Defaults.settings.datetime, datetime.datetime(2012, 3, 14, 12, 3, 14))
-
 
         # Settings should be retrieved in the order of definition
         self.assertEqual(Populated.settings.keys(),
@@ -190,12 +206,17 @@ class SettingsTestCase(test.TestCase):
         loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'boolean', True)
         loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'integer', 13)
         loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'string', 'Friday')
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'list_semi_colon', 'aa@bb.com;cc@dd.com')
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'list_comma', 'aa@bb.com,cc@dd.com')
+        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'list_semi_colon',
+                                  'aa@bb.com;cc@dd.com')
+        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'list_comma',
+                                  'aa@bb.com,cc@dd.com')
         # for date/time you can specify string (as above) or proper object
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'date', datetime.date(1912, 6, 23))
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'time', datetime.time(1, 2, 3))
-        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'datetime', datetime.datetime(1912, 6, 23, 1, 2, 3))
+        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'date',
+                                  datetime.date(1912, 6, 23))
+        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'time',
+                                  datetime.time(1, 2, 3))
+        loading.set_setting_value('dbsettings.tests', 'Unpopulated', 'datetime',
+                                  datetime.datetime(1912, 6, 23, 1, 2, 3))
 
         self.assertEqual(Unpopulated.settings.boolean, True)
         self.assertEqual(Unpopulated.settings.integer, 13)
@@ -211,7 +232,6 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Defaults.settings.boolean, False)
         loading.set_setting_value('dbsettings.tests', 'Defaults', 'boolean_false', True)
         self.assertEqual(Defaults.settings.boolean_false, True)
-
 
         # Updating blankable settings
         self.assertEqual(Blankable.settings.string, '')
@@ -324,13 +344,20 @@ class SettingsTestCase(test.TestCase):
             'dbsettings.tests__Editable__datetime': '',
         }
         response = self.client.post(site_form, data)
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__integer', 'Enter a whole number.')
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__string', 'This field is required.')
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__list_semi_colon', 'This field is required.')
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__list_comma', 'This field is required.')
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__date', 'Enter a valid date.')
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__time', 'Enter a valid time.')
-        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__datetime', 'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__integer',
+                             'Enter a whole number.')
+        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__string',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__list_semi_colon',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__list_comma',
+                             'This field is required.')
+        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__date',
+                             'Enter a valid date.')
+        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__time',
+                             'Enter a valid time.')
+        self.assertFormError(response, 'form', 'dbsettings.tests__Editable__datetime',
+                             'This field is required.')
 
         # Successful submissions should redirect
         data = {
@@ -368,5 +395,5 @@ class SettingsTestCase(test.TestCase):
     def _test_form_fields(self, url, fields_num, present=True, variable_name='form'):
         global_setting = 'dbsettings.tests____clash2'  # Some global setting name
         response = self.client.get(url)
-        self.assertEqual(present, global_setting in response.context[0][variable_name].fields.keys())
+        self.assertEqual(present, global_setting in response.context[0][variable_name].fields)
         self.assertEqual(len(response.context[0][variable_name].fields), fields_num)

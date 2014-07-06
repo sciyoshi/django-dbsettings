@@ -1,2 +1,2 @@
-from dbsettings.values import *
-from dbsettings.group import *
+from dbsettings.values import *  # NOQA
+from dbsettings.group import *  # NOQA
