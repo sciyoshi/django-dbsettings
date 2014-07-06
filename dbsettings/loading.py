@@ -19,7 +19,7 @@ def get_all_settings():
 
 
 def get_app_settings(app_label):
-    return [p for p in _settings.values() if app_label == p.module_name.split('.')[-2]]
+    return [p for p in _settings.values() if app_label == p.app]
 
 
 def get_setting(module_name, class_name, attribute_name):

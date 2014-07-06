@@ -62,6 +62,10 @@ class Value(object):
 
         setattr(cls, self.attribute_name, self)
 
+    @property
+    def app(self):
+        return getattr(self, '_app', self.module_name.split('.')[-2])
+
     def __get__(self, instance=None, cls=None):
         if instance is None:
             raise AttributeError("%r is only accessible from %s instances." %

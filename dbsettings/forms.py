@@ -27,7 +27,7 @@ class SettingsEditor(forms.BaseForm):
         field.label = capfirst(field.label)
         module_name, class_name, _ = RE_FIELD_NAME.match(field.name).groups()
 
-        app_label = module_name.split('.')[-2]
+        app_label = self.apps[field.name]
         field.module_name = app_label
 
         if class_name:
@@ -44,9 +44,10 @@ def customized_editor(user, settings):
     "Customize the setting editor based on the current user and setting list"
     base_fields = OrderedDict()
     verbose_names = {}
+    apps = {}
     for setting in settings:
         perm = '%s.can_edit_%s_settings' % (
-            setting.module_name.split('.')[-2],
+            setting.app,
             setting.class_name.lower()
         )
         if user.has_perm(perm):
@@ -64,7 +65,8 @@ def customized_editor(user, settings):
             else:
                 field = setting.field(**kwargs)
             key = '%s__%s__%s' % setting.key
+            apps[key] = setting.app
             base_fields[key] = field
             verbose_names[key] = setting.verbose_name
-    attrs = {'base_fields': base_fields, 'verbose_names': verbose_names}
+    attrs = {'base_fields': base_fields, 'verbose_names': verbose_names, 'apps': apps}
     return type('SettingsEditor', (SettingsEditor,), attrs)

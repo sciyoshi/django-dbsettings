@@ -36,7 +36,7 @@ class GroupDescriptor(object):
 @six.add_metaclass(GroupBase)
 class Group(object):
 
-    def __new__(cls, verbose_name=None, copy=True):
+    def __new__(cls, verbose_name=None, copy=True, app_label=None):
         # If not otherwise provided, set the module to where it was executed
         if '__module__' in cls.__dict__:
             module_name = cls.__dict__['__module__']
@@ -53,6 +53,8 @@ class Group(object):
             Value.creation_counter += 1
             if not hasattr(attr, 'verbose_name'):
                 attr.verbose_name = verbose_name
+            if app_label:
+                attr._app = app_label
             register_setting(attr)
 
         attr_dict = dict(attrs + [('__module__', module_name)])
@@ -71,6 +73,7 @@ class Group(object):
                 unregister_setting(attr)
                 attr.module_name = cls.__module__
                 attr.class_name = cls.__name__
+                attr._app = cls._meta.app_label
                 register_setting(attr)
 
         # Create permission for editing settings on the model
