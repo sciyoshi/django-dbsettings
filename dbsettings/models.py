@@ -3,9 +3,11 @@ from django.contrib.sites.models import Site
 
 
 class SettingManager(models.Manager):
-    def get_query_set(self):
-        all = super(SettingManager, self).get_query_set()
-        return all.filter(site=Site.objects.get_current())
+    def get_queryset(self):
+        sup = super(SettingManager, self)
+        qs = sup.get_queryset() if hasattr(sup, 'get_queryset') else sup.get_query_set()
+        return qs.filter(site=Site.objects.get_current())
+    get_query_set = get_queryset
 
 
 class Setting(models.Model):

@@ -1,8 +1,8 @@
 import re
 
+from collections import OrderedDict
 from django.db.models import get_model
 from django import forms
-from django.utils.datastructures import SortedDict
 from django.utils.text import capfirst
 
 from dbsettings.loading import get_setting_storage
@@ -42,7 +42,7 @@ class SettingsEditor(forms.BaseForm):
 
 def customized_editor(user, settings):
     "Customize the setting editor based on the current user and setting list"
-    base_fields = SortedDict()
+    base_fields = OrderedDict()
     verbose_names = {}
     for setting in settings:
         perm = '%s.can_edit_%s_settings' % (
