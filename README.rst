@@ -140,7 +140,7 @@ lower-case, as it will be capitalized as necessary, automatically.
     class EmailOptions(dbsettings.Group):
         enabled = dbsettings.BooleanValue('whether to send emails or not')
         sender = dbsettings.StringValue('address to send emails from')
-        subject = dbsettings.StringValue()
+        subject = dbsettings.StringValue(default='SiteMail')
 
 For more descriptive explanation, the ``help_text`` argument can be used. It
 will be shown in the editor.
@@ -247,6 +247,7 @@ the ``ImageLimits`` were already defined.
     False
     >>> models.email.sender
     >>> models.email.subject
+    'SiteMail'  # Since default was defined
 
     # ImageLimits are defined
     >>> models.Image.limits.maximum_width

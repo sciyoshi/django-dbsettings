@@ -26,6 +26,14 @@ def get_setting(module_name, class_name, attribute_name):
     return _settings[module_name, class_name, attribute_name]
 
 
+def setting_in_db(module_name, class_name, attribute_name):
+    return Setting.objects.filter(
+        module_name=module_name,
+        class_name=class_name,
+        attribute_name=attribute_name,
+    ).count() == 1
+
+
 def get_setting_storage(module_name, class_name, attribute_name):
     key = _get_cache_key(module_name, class_name, attribute_name)
     storage = cache.get(key)
