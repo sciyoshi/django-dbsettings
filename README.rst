@@ -436,10 +436,16 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
-**0.7**
+**0.7.2** (24/03/2015)
+    - Added default values for fields.
+    - Fixed Python 3.3 compatibility
+    - Added creation of folders with ImageValue
+**0.7.1** (11/03/2015)
+    - Fixed pypi distribution.
+**0.7** (06/07/2014)
     - Added PasswordValue
     - Added compatibility with Django 1.6 and 1.7.
-**0.6**
+**0.6** (16/09/2013)
     - Added compatibility with Django 1.5 and python3, dropped support for Django 1.2.
     - Fixed permissions: added permission for editing non-model (module-level) settings
     - Make PIL/Pillow not required in setup.py
