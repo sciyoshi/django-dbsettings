@@ -436,10 +436,12 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
-**0.7.2** (24/03/2015)
+**0.7.4** (24/03/2015)
     - Added default values for fields.
     - Fixed Python 3.3 compatibility
     - Added creation of folders with ImageValue
+**0.7.3**, **0.7.2**
+    pypi problems
 **0.7.1** (11/03/2015)
     - Fixed pypi distribution.
 **0.7** (06/07/2014)
