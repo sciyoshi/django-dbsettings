@@ -93,7 +93,7 @@ causing your application to ignore the new changes.
 No other backends exhibit this behavior, but since ``simple`` is the default,
 make sure to specify a proper backend when moving to a production environment.
 
-.. _`cache framework`: http://www.djangoproject.com/documentation/cache/
+.. _`cache framework`: http://docs.djangoproject.com/en/dev/topics/cache/
 
 Usage
 =====
