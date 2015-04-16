@@ -30,7 +30,13 @@ Requirements
 +------------------+------------+--------------+
 | Dbsettings       | Python     | Django       |
 +==================+============+==============+
-| >=0.7            | 3.2        | 1.5 - 1.7    |
+| ==0.8            | 3.2        | 1.5 - 1.8    |
+|                  +------------+--------------+
+|                  | 2.7        | 1.4 - 1.8    |
+|                  +------------+--------------+
+|                  | 2.6        | 1.4 - 1.6    |
++------------------+------------+--------------+
+| ==0.7            | 3.2        | 1.5 - 1.7    |
 |                  +------------+--------------+
 |                  | 2.7        | 1.3 - 1.7    |
 |                  +------------+--------------+
@@ -436,6 +442,10 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**0.8.0** (16/04/2015)
+    - Switched to using django.utils.six instead of standalone six.
+    - Dropped compatibility with Django 1.3
+    - Tested with Django 1.8
 **0.7.4** (24/03/2015)
     - Added default values for fields.
     - Fixed Python 3.3 compatibility
