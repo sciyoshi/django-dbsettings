@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-import six
+from django.utils import six
 
 import datetime
 from decimal import Decimal

@@ -1,5 +1,5 @@
 import sys
-import six
+from django.utils import six
 
 from dbsettings.values import Value
 from dbsettings.loading import register_setting, unregister_setting

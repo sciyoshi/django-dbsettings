@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-import six
+from django.utils import six
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
