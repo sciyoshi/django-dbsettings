@@ -69,6 +69,13 @@ In order to setup database storage, and to let Django know about your use of
         ...
     )
 
+If your Django project utilizes ``sites`` framework, all setting would be related
+to some site. If ``sites`` are not present, settings won't be connected to any site
+(and ``sites`` framework is no longer required since 0.8.1).
+
+You can force to do (not) use ``sites`` via ``DBSETTINGS_USE_SITES = True / False``
+configuration variable (put it in project's ``settings.py``).
+
 URL Configuration
 -----------------
 
