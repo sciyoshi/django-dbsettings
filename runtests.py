@@ -29,7 +29,13 @@ SETTINGS = {
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
-    )
+    ),
+    'MIGRATION_MODULES': {
+        # This allow test models to be created even if they are not in migration.
+        # Still no better solution available: https://code.djangoproject.com/ticket/7835
+        # This hack is used in Django testrunner itself.
+        'dbsettings': 'dbsettings.skip_migrations_for_test',
+    },
 }
 
 if not settings.configured:
