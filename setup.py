@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 # Dynamically calculate the version based on dbsettings.VERSION
-version_tuple = (0, 5, None)
+version_tuple = (0, 8, 1)
 if version_tuple[2] is not None:
     if type(version_tuple[2]) == int:
         version = "%d.%d.%s" % version_tuple
@@ -20,11 +20,11 @@ setup(
     maintainer='Jacek Tomaszewski',
     maintainer_email='jacek.tomek@gmail.com',
     url='http://github.com/zlorf/django-dbsettings',
-    packages=find_packages(),
+    packages=find_packages(include=['dbsettings']),
     include_package_data=True,
     license='BSD',
     install_requires=(
-        'PIL',
+        'django>=1.4.11',
     ),
     classifiers=[
         'Development Status :: 4 - Beta',

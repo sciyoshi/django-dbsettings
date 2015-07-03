@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from django.utils import six
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -46,8 +49,9 @@ def app_settings(request, app_label, template='dbsettings/app_settings.html'):
                         location = setting.class_name
                     else:
                         location = setting.module_name
-                    update_msg = (_(u'Updated %(desc)s on %(location)s') %
-                                  {'desc': unicode(setting.description), 'location': location})
+                    update_msg = (_('Updated %(desc)s on %(location)s') %
+                                  {'desc': six.text_type(setting.description),
+                                   'location': location})
                     messages.add_message(request, messages.INFO, update_msg)
 
             return HttpResponseRedirect(request.path)

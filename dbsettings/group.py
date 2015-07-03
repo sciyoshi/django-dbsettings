@@ -1,4 +1,5 @@
 import sys
+from django.utils import six
 
 from dbsettings.values import Value
 from dbsettings.loading import register_setting, unregister_setting
@@ -12,22 +13,13 @@ class GroupBase(type):
             return
         attrs.pop('__module__', None)
         attrs.pop('__doc__', None)
+        attrs.pop('__qualname__', None)
         for attribute_name, attr in attrs.items():
             if not isinstance(attr, Value):
                 raise TypeError('The type of %s (%s) is not a valid Value.' %
                                 (attribute_name, attr.__class__.__name__))
             mcs.add_to_class(attribute_name, attr)
         super(GroupBase, mcs).__init__(name, bases, attrs)
-
-
-def install_permission(cls, permission):
-    if permission not in cls._meta.permissions:
-        # Add a permission for the setting editor
-        try:
-            cls._meta.permissions.append(permission)
-        except AttributeError:
-            # Permissions were supplied as a tuple, so preserve that
-            cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
 
 
 class GroupDescriptor(object):
@@ -42,10 +34,10 @@ class GroupDescriptor(object):
         return self.group
 
 
+@six.add_metaclass(GroupBase)
 class Group(object):
-    __metaclass__ = GroupBase
 
-    def __new__(cls, verbose_name=None, copy=True):
+    def __new__(cls, verbose_name=None, copy=True, app_label=None):
         # If not otherwise provided, set the module to where it was executed
         if '__module__' in cls.__dict__:
             module_name = cls.__dict__['__module__']
@@ -55,13 +47,15 @@ class Group(object):
         attrs = [(k, v) for (k, v) in cls.__dict__.items() if isinstance(v, Value)]
         if copy:
             attrs = [(k, v.copy()) for (k, v) in attrs]
-        attrs.sort(lambda a, b: cmp(a[1], b[1]))
+        attrs.sort(key=lambda a: a[1])
 
         for _, attr in attrs:
             attr.creation_counter = Value.creation_counter
             Value.creation_counter += 1
             if not hasattr(attr, 'verbose_name'):
                 attr.verbose_name = verbose_name
+            if app_label:
+                attr._app = app_label
             register_setting(attr)
 
         attr_dict = dict(attrs + [('__module__', module_name)])
@@ -80,6 +74,7 @@ class Group(object):
                 unregister_setting(attr)
                 attr.module_name = cls.__module__
                 attr.class_name = cls.__name__
+                attr._app = cls._meta.app_label
                 register_setting(attr)
 
         # Create permission for editing settings on the model
