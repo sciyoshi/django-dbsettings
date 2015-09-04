@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 # Dynamically calculate the version based on dbsettings.VERSION
 version_tuple = (0, 8, 1)
@@ -20,7 +20,10 @@ setup(
     maintainer='Jacek Tomaszewski',
     maintainer_email='jacek.tomek@gmail.com',
     url='http://github.com/zlorf/django-dbsettings',
-    packages=find_packages(include=['dbsettings']),
+    packages=[
+        'dbsettings',
+        'dbsettings.migrations',
+    ],
     include_package_data=True,
     license='BSD',
     install_requires=(
