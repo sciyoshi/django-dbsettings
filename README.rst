@@ -100,13 +100,17 @@ work just fine.
 
 Most productions environments, including mod_python and FastCGI, run multiple
 processes, which some backends don't fully support. When using the ``simple``
-or ``locmem`` backends, updates to your settings won't be reflected immediately,
-causing your application to ignore the new changes.
+or ``locmem`` backends, updates to your settings won't be reflected immediately
+in all workers, causing your application to ignore the new changes.
 
 No other backends exhibit this behavior, but since ``simple`` is the default,
 make sure to specify a proper backend when moving to a production environment.
 
 .. _`cache framework`: http://docs.djangoproject.com/en/dev/topics/cache/
+
+Alternatively you can disable caching of settings by setting
+``DBSETTINGS_USE_CACHE = False`` in ``settings.py``. Beware though: every
+access of any setting will result in database hit.
 
 Usage
 =====

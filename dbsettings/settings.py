@@ -9,3 +9,4 @@ except ImportError:
 sites_installed = (apps.is_installed('django.contrib.sites') if APPS_REGISTRY else
                    'django.contrib.sites' in settings.INSTALLED_APPS)
 USE_SITES = getattr(settings, 'DBSETTINGS_USE_SITES', sites_installed)
+USE_CACHE = getattr(settings, 'DBSETTINGS_USE_CACHE', True)
