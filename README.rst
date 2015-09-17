@@ -76,6 +76,11 @@ to some site. If ``sites`` are not present, settings won't be connected to any s
 You can force to do (not) use ``sites`` via ``DBSETTINGS_USE_SITES = True / False``
 configuration variable (put it in project's ``settings.py``).
 
+By default, values stored in database are limited to 255 characters per setting.
+You can change this limit with ``DBSETTINGS_VALUE_LENGTH`` configuration variable.
+If you change this value after migrations were run, you need to manually alter
+the ``dbsettings_setting`` table schema.
+
 URL Configuration
 -----------------
 
