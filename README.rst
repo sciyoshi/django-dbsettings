@@ -458,6 +458,11 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**0.8.2** (17/09/2015)
+    - Added migrations to distro
+    - Add configuration option to change max length of setting values from 255 to whatever
+    - Add configuration option to disable caching (thanks nwaxiomatic)
+    - Fixed PercentValue rendering (thanks last-partizan)
 **0.8.1** (21/06/2015)
     - Made ``django.contrib.sites`` framework dependency optional
     - Added migration for app
