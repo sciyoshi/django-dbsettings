@@ -39,4 +39,5 @@ setup(
         'Programming Language :: Python',
         'Topic :: Utilities'
     ],
+    zip_safe=False,
 )
