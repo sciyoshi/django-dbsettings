@@ -25,7 +25,7 @@ def mk_permissions(permissions, appname, verbosity):
 
 def handler(sender, **kwargs):
     from dbsettings.loading import get_app_settings
-    app_label = sender.__name__.split('.')[-2]
+    app_label = sender.label
     are_global_settings = any(not s.class_name for s in get_app_settings(app_label))
     if are_global_settings:
         permission = (
