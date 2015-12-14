@@ -1,4 +1,4 @@
-from django.db.models.signals import post_syncdb
+from django.db.models.signals import post_migrate
 
 
 def mk_permissions(permissions, appname, verbosity):
@@ -35,4 +35,4 @@ def handler(sender, **kwargs):
         mk_permissions([permission], app_label, 0)
 
 
-post_syncdb.connect(handler)
+post_migrate.connect(handler)
