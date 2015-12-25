@@ -21,7 +21,7 @@ provides a convenient way to do so.
 
 The main goal in using this application is to define a set of placeholders that
 will be used to represent the settings that are stored in the database. Then,
-the settings may edited at run-time using the provided editor, and all Python
+the settings may be edited at run-time using the provided editor, and all Python
 code in your application that uses the setting will receive the updated value.
 
 Requirements
@@ -30,6 +30,12 @@ Requirements
 +------------------+------------+--------------+
 | Dbsettings       | Python     | Django       |
 +==================+============+==============+
+| ==0.9            | 3.4 - 3.5  | 1.7 - 1.9    |
+|                  +------------+--------------+
+|                  | 3.2 - 3.3  | 1.7 - 1.8    |
+|                  +------------+--------------+
+|                  | 2.7        | 1.7 - 1.9    |
++------------------+------------+--------------+
 | ==0.8            | 3.2        | 1.5 - 1.8    |
 |                  +------------+--------------+
 |                  | 2.7        | 1.4 - 1.8    |
@@ -103,7 +109,7 @@ minimize how often the database needs to be accessed. During development,
 Django's built-in server runs in a single process, so all cache backends will
 work just fine.
 
-Most productions environments, including mod_python and FastCGI, run multiple
+Most productions environments, including mod_python, FastCGI or WSGI, run multiple
 processes, which some backends don't fully support. When using the ``simple``
 or ``locmem`` backends, updates to your settings won't be reflected immediately
 in all workers, causing your application to ignore the new changes.
@@ -213,7 +219,8 @@ Database setup
 A single model is provided for database storage, and this model must be
 installed in your database before you can use the included editors or the
 permissions that will be automatically created. This is a simple matter of
-running ``manage.py syncdb`` now that your settings are configured.
+running ``manage.py syncdb`` or ``manage.py migrate`` now that your settings
+are configured.
 
 This step need only be repeate when settings are added to a new application,
 as it will create the appropriate permissions. Once those are in place, new
@@ -239,7 +246,7 @@ For example, if you used the prefix of ``'settings/'``, the URL ``/settings/``
 will provide an editor of all available settings, while ``/settings/myapp/``
 would contain a list of just the settings for ``myapp``.
 
-URL patterns are named: 'site_settings' and 'app_settings', respectively.
+URL patterns are named: ``'site_settings'`` and ``'app_settings'``, respectively.
 
 The editors are restricted to staff members, and the particular settings that
 will be available to users is based on permissions that are set for them. This
@@ -257,15 +264,15 @@ group.
 If any settings are referenced without being set to a particular value, they
 will default to ``None`` (or ``False`` in the case of ``BooleanValue``, or
 whatever was passed as ``default``). In the
-following example, assume that ``EmailOptions`` were added to the project after
-the ``ImageLimits`` were already defined.
+following example, assume that ``EmailOptions`` were just added to the project
+and the ``ImageLimits`` were added earlier and already set via editor.
 
 ::
 
     >>> from myproject.myapp import models
 
     # EmailOptions are not defined
-    >>> models.options.enabled
+    >>> models.email.enabled
     False
     >>> models.email.sender
     >>> models.email.subject
@@ -289,7 +296,7 @@ happens behind the scenes.
             return False
         if self.height > Image.limits.maximum_height:
             return False
-	return True
+    return True
 
 As mentioned, views can make use of these settings as well.
 
@@ -305,7 +312,17 @@ As mentioned, views can make use of these settings as well.
 
         if email.enabled:
             from django.core.mail import send_mail
-	    send_mail(email.subject, 'message', email.sender, [request.user.email])
+        send_mail(email.subject, 'message', email.sender, [request.user.email])
+
+Settings can be not only read, but also written. The admin editor is more
+user-friendly, but in case code need to change something::
+
+    from myproject.myapp.models import Image
+
+    def low_disk_space():
+        Image.limits.maximum_width = Image.limits.maximum_height = 200
+
+Every write is immediately commited to the database and proper cache key is deleted.
 
 A note about model instances
 ----------------------------
@@ -330,9 +347,10 @@ DurationValue
 -------------
 
 Presents a set of inputs suitable for specifying a length of time. This is
-represented in Python as a ``timedelta_`` object.
+represented in Python as a |timedelta|_ object.
 
-.. _timedelta: http://docs.python.org/lib/datetime-timedelta.html
+.. |timedelta| replace:: ``timedelta``
+.. _timedelta: https://docs.python.org/2/library/datetime.html#timedelta-objects
 
 FloatValue
 ----------
@@ -351,8 +369,8 @@ Similar to ``IntegerValue``, but with a limit requiring that the value be
 between 0 and 100. In addition, when accessed in Python, the value will be
 divided by 100, so that it is immediately suitable for calculations.
 
-For instance, if a ``myapp.taxes.sales_tax`` is set to 5, the following
-calculation would be valid::
+For instance, if a ``myapp.taxes.sales_tax`` was set to 5 in the editor,
+the following calculation would be valid::
 
     >>> 5.00 * myapp.taxes.sales_tax
     0.25
@@ -365,7 +383,8 @@ Similar to ``IntegerValue``, but limited to positive values and 0.
 StringValue
 -----------
 
-Presents a standard input, accepting any text string up to 255 characters. In
+Presents a standard input, accepting any text string up to 255
+(or ``DBSETTINGS_VALUE_LENGTH``) characters. In
 Python, the value is accessed as a standard string.
 
 DateTimeValue
@@ -427,7 +446,7 @@ set any applicable defaults.
 
 Living at ``dbsettings.utils.set_defaults``, this utility is designed to be used
 within the app's ``management.py``. This way, when the application is installed
-using ``syncdb``, the default settings will also be installed to the database.
+using ``syncdb``/``migrate``, the default settings will also be installed to the database.
 
 The function requires a single positional argument, which is the ``models``
 module for the application. Any additional arguments must represent the actual
@@ -458,6 +477,9 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**0.9.0** (25/12/2015)
+    - Added compatibility with Django 1.9 (thanks Alonso)
+    - Dropped compatibility with Django 1.4, 1.5, 1.6
 **0.8.2** (17/09/2015)
     - Added migrations to distro
     - Add configuration option to change max length of setting values from 255 to whatever
@@ -468,8 +490,8 @@ Changelog
     - Added migration for app
 **0.8.0** (16/04/2015)
     - Switched to using django.utils.six instead of standalone six.
+    - Added compatibility with Django 1.8
     - Dropped compatibility with Django 1.3
-    - Tested with Django 1.8
 **0.7.4** (24/03/2015)
     - Added default values for fields.
     - Fixed Python 3.3 compatibility

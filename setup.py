@@ -1,7 +1,7 @@
 from setuptools import setup
 
 # Dynamically calculate the version based on dbsettings.VERSION
-version_tuple = (0, 8, 2)
+version_tuple = (0, 9, 0)
 if version_tuple[2] is not None:
     if type(version_tuple[2]) == int:
         version = "%d.%d.%s" % version_tuple
@@ -27,7 +27,7 @@ setup(
     include_package_data=True,
     license='BSD',
     install_requires=(
-        'django>=1.4.11',
+        'django>=1.7',
     ),
     classifiers=[
         'Development Status :: 4 - Beta',
