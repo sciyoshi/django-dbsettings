@@ -1,9 +1,9 @@
-from django.utils import six
 import datetime
 
 import django
 from django.db import models
 from django import test
+from django.utils import six
 from django.utils.functional import curry
 from django.utils.translation import activate, deactivate
 
@@ -96,19 +96,22 @@ class ModelClash(TestBaseModel):
 module_clash2 = ClashSettings2(app_label='dbsettings')
 
 
+@test.override_settings(ROOT_URLCONF='dbsettings.tests.test_urls')
 class SettingsTestCase(test.TestCase):
-    urls = 'dbsettings.tests.test_urls'
 
     @classmethod
     def setUpClass(cls):
         # Since some text assertions are performed, make sure that no translation interrupts.
+        super(SettingsTestCase, cls).setUpClass()
         activate('en')
 
     @classmethod
     def tearDownClass(cls):
         deactivate()
+        super(SettingsTestCase, cls).tearDownClass()
 
     def setUp(self):
+        super(SettingsTestCase, self).setUp()
         # Standard test fixtures don't update the in-memory cache.
         # So we have to do it ourselves this time.
         loading.set_setting_value(MODULE_NAME, 'Populated', 'boolean', True)
@@ -303,10 +306,7 @@ class SettingsTestCase(test.TestCase):
         self.assertCorrectSetting(BooleanValue, MODULE_NAME, '', 'clash2')
 
     def assertLoginFormShown(self, response):
-        if django.VERSION >= (1, 7):
-            self.assertRedirects(response, '/admin/login/?next=/settings/')
-        else:
-            self.assertTemplateUsed(response, 'admin/login.html')
+        self.assertRedirects(response, '/admin/login/?next=/settings/')
 
     def test_forms(self):
         "Forms should display only the appropriate settings"

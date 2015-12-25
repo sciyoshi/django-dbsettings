@@ -36,6 +36,12 @@ SETTINGS = {
         # This hack is used in Django testrunner itself.
         'dbsettings': 'dbsettings.skip_migrations_for_test',
     },
+    'TEMPLATES': [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'APP_DIRS': True,
+        },
+    ],
 }
 
 if not settings.configured:

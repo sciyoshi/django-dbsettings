@@ -1,14 +1,9 @@
 import re
 
 from collections import OrderedDict
-import django
+from django.apps import apps
 from django import forms
 from django.utils.text import capfirst
-if django.VERSION < (1, 8):
-    from django.db.models import get_model
-else:
-    from django.apps import apps
-    get_model = apps.get_model
 
 from dbsettings.loading import get_setting_storage
 
@@ -36,7 +31,7 @@ class SettingsEditor(forms.BaseForm):
         field.module_name = app_label
 
         if class_name:
-            model = get_model(app_label, class_name)
+            model = apps.get_model(app_label, class_name)
             if model:
                 class_name = model._meta.verbose_name
         field.class_name = class_name
