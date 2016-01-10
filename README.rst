@@ -477,6 +477,8 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**0.9.1** (10/01/2016)
+    - Fixed `Sites` app being optional (thanks rolexCoder)
 **0.9.0** (25/12/2015)
     - Added compatibility with Django 1.9 (thanks Alonso)
     - Dropped compatibility with Django 1.4, 1.5, 1.6
