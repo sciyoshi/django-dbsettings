@@ -477,6 +477,9 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**0.9.2** (01/05/2016)
+    - Fixed bug when saving non-required settings
+    - Fixed problem with ImageValue in Python 3 (thanks rolexCoder)
 **0.9.1** (10/01/2016)
     - Fixed `Sites` app being optional (thanks rolexCoder)
 **0.9.0** (25/12/2015)
