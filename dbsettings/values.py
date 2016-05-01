@@ -84,6 +84,9 @@ class Value(object):
 
     # Subclasses should override the following methods where applicable
 
+    def meaningless(self, value):
+        return value is None or value == ""
+
     def to_python(self, value):
         "Returns a native Python object suitable for immediate use"
         return value
@@ -122,7 +125,7 @@ class DecimalValue(Value):
     field = forms.DecimalField
 
     def to_python(self, value):
-        return Decimal(value)
+        return Decimal(value) if not self.meaningless(value) else None
 
 
 # DurationValue has a lot of duplication and ugliness because of issue #2443
@@ -158,14 +161,14 @@ class FloatValue(Value):
     field = forms.FloatField
 
     def to_python(self, value):
-        return float(value)
+        return float(value) if not self.meaningless(value) else None
 
 
 class IntegerValue(Value):
     field = forms.IntegerField
 
     def to_python(self, value):
-        return int(value)
+        return int(value) if not self.meaningless(value) else None
 
 
 class PercentValue(Value):
@@ -182,7 +185,7 @@ class PercentValue(Value):
                 return mark_safe(forms.TextInput.render(self, attrs=attrs, *args, **kwargs) + ' %')
 
     def to_python(self, value):
-        return Decimal(value) / 100
+        return Decimal(value) / 100 if not self.meaningless(value) else None
 
 
 class PositiveIntegerValue(IntegerValue):

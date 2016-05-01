@@ -96,6 +96,18 @@ class ModelClash(TestBaseModel):
 module_clash2 = ClashSettings2(app_label='dbsettings')
 
 
+class NonRequiredSettings(dbsettings.Group):
+    integer = dbsettings.IntegerValue(required=False)
+    string = dbsettings.StringValue(required=False)
+    fl = dbsettings.FloatValue(required=False)
+    decimal = dbsettings.DecimalValue(required=False)
+    percent = dbsettings.PercentValue(required=False)
+
+
+class NonReq(TestBaseModel):
+    non_req = NonRequiredSettings()
+
+
 @test.override_settings(ROOT_URLCONF='dbsettings.tests.test_urls')
 class SettingsTestCase(test.TestCase):
 
@@ -272,6 +284,16 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Unpopulated.settings.time, datetime.time(3, 47, 0))
         self.assertEqual(Unpopulated.settings.datetime, datetime.datetime(1939, 9, 1, 3, 47, 0))
 
+        # Test non-required settings
+        self.assertEqual(NonReq.non_req.integer, None)
+        self.assertEqual(NonReq.non_req.fl, None)
+        self.assertEqual(NonReq.non_req.string, "")
+
+        loading.set_setting_value(MODULE_NAME, 'NonReq', 'integer', '2')
+        self.assertEqual(NonReq.non_req.integer, 2)
+        loading.set_setting_value(MODULE_NAME, 'NonReq', 'integer', '')
+        self.assertEqual(NonReq.non_req.integer, None)
+
     def test_declaration(self):
         "Group declarations can only contain values and a docstring"
         # This definition is fine
@@ -396,6 +418,24 @@ class SettingsTestCase(test.TestCase):
         self.assertEqual(Editable.settings.date, datetime.date(2012, 6, 28))
         self.assertEqual(Editable.settings.time, datetime.time(16, 37, 45))
         self.assertEqual(Editable.settings.datetime, datetime.datetime(2012, 6, 28, 16, 37, 45))
+
+        # test non-req submission
+        perm = Permission.objects.get(codename='can_edit_nonreq_settings')
+        user.user_permissions.add(perm)
+        data = {
+            '%s__NonReq__integer' % MODULE_NAME: '',
+            '%s__NonReq__fl' % MODULE_NAME: '',
+            '%s__NonReq__decimal' % MODULE_NAME: '',
+            '%s__NonReq__percent' % MODULE_NAME: '',
+            '%s__NonReq__string' % MODULE_NAME: '',
+        }
+        response = self.client.post(site_form, data)
+        self.assertEqual(NonReq.non_req.integer, None)
+        self.assertEqual(NonReq.non_req.fl, None)
+        self.assertEqual(NonReq.non_req.decimal, None)
+        self.assertEqual(NonReq.non_req.percent, None)
+        self.assertEqual(NonReq.non_req.string, '')
+        user.user_permissions.remove(perm)
 
         # Check if module level settings show properly
         self._test_form_fields(site_form, 8, False)
