@@ -477,6 +477,8 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
+**0.9.3** (02/06/2016)
+    - Fixed (hopefully for good) problem with ImageValue in Python 3 (thanks rolexCoder)
 **0.9.2** (01/05/2016)
     - Fixed bug when saving non-required settings
     - Fixed problem with ImageValue in Python 3 (thanks rolexCoder)
