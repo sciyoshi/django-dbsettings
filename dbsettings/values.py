@@ -306,7 +306,7 @@ class ImageValue(Value):
         if not value:
             return None
 
-        hashed_name = md5(six.binary_type(time.time())).hexdigest() + value.name[-4:]
+        hashed_name = md5(six.text_type(time.time()).encode()).hexdigest() + value.name[-4:]
         image_path = pjoin(self._upload_to, hashed_name)
         dest_name = pjoin(settings.MEDIA_ROOT, image_path)
         directory = pjoin(settings.MEDIA_ROOT, self._upload_to)
