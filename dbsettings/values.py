@@ -29,11 +29,12 @@ class Value(object):
     creation_counter = 0
     unitialized_value = None
 
-    def __init__(self, description=None, help_text=None, choices=None, required=True, default=None):
+    def __init__(self, description=None, help_text=None, choices=None, required=True, default=None, widget=None):
         self.description = description
         self.help_text = help_text
         self.choices = choices or []
         self.required = required
+        self.widget = widget
         if default is None:
             self.default = self.unitialized_value
         else:
