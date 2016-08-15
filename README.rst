@@ -180,6 +180,16 @@ In addition, settings may be supplied with a list of available options, through
 the use of of the ``choices`` argument. This works exactly like the ``choices``
 argument for model fields, and that of the newforms ``ChoiceField``.
 
+The widget used for a value can be overriden using the ``widget`` keyword. For example:
+
+::
+
+    payment_instructions = dbsettings.StringValue(
+        help_text="Printed on every invoice.",
+        default="Payment to Example XYZ\nBank name here\nAccount: 0123456\nSort: 01-02-03",
+        widget=forms.Textarea
+    )
+
 A full list of value types is available later in this document, but the process
 and arguments are the same for each.
 
