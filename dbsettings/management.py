@@ -1,3 +1,4 @@
+from django import VERSION
 from django.db.models.signals import post_migrate
 
 
@@ -10,8 +11,9 @@ def mk_permissions(permissions, appname, verbosity):
     from django.contrib.auth.models import Permission
     from django.contrib.contenttypes.models import ContentType
     # create a content type for the app
+    defaults = {} if VERSION >= (1, 10) else {'name': appname}
     ct, created = ContentType.objects.get_or_create(model='', app_label=appname,
-                                                    defaults={'name': appname})
+                                                    defaults=defaults)
     if created and verbosity >= 2:
         print("Adding custom content type '%s'" % ct)
     # create permissions
