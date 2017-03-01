@@ -86,6 +86,9 @@ class Value(object):
 
     # Subclasses should override the following methods where applicable
 
+    def meaningless(self, value):
+        return value is None or value == ""
+
     def to_python(self, value):
         "Returns a native Python object suitable for immediate use"
         return value
@@ -124,7 +127,7 @@ class DecimalValue(Value):
     field = forms.DecimalField
 
     def to_python(self, value):
-        return Decimal(value)
+        return Decimal(value) if not self.meaningless(value) else None
 
 
 # DurationValue has a lot of duplication and ugliness because of issue #2443
@@ -160,20 +163,19 @@ class FloatValue(Value):
     field = forms.FloatField
 
     def to_python(self, value):
-        return float(value)
+        return float(value) if not self.meaningless(value) else None
 
 
 class IntegerValue(Value):
     field = forms.IntegerField
 
     def to_python(self, value):
-        return int(value)
+        return int(value) if not self.meaningless(value) else None
 
 
 class PercentValue(Value):
 
     class field(forms.DecimalField):
-
         def __init__(self, *args, **kwargs):
             forms.DecimalField.__init__(self, 100, 0, 5, 2, *args, **kwargs)
 
@@ -182,12 +184,10 @@ class PercentValue(Value):
                 # Place a percent sign after a smaller text field
                 attrs = kwargs.pop('attrs', {})
                 attrs['size'] = attrs['max_length'] = 6
-                return mark_safe(
-                    forms.TextInput.render(self, attrs=attrs, *args, **kwargs) +
-                    '<span style="vertical-align: middle;">&nbsp;%</span>')
+                return mark_safe(forms.TextInput.render(self, attrs=attrs, *args, **kwargs) + ' %')
 
     def to_python(self, value):
-        return Decimal(value) / 100
+        return Decimal(value) / 100 if not self.meaningless(value) else None
 
 
 class PositiveIntegerValue(IntegerValue):
@@ -308,7 +308,7 @@ class ImageValue(Value):
         if not value:
             return None
 
-        hashed_name = md5(six.text_type(time.time())).hexdigest() + value.name[-4:]
+        hashed_name = md5(six.text_type(time.time()).encode()).hexdigest() + value.name[-4:]
         image_path = pjoin(self._upload_to, hashed_name)
         dest_name = pjoin(settings.MEDIA_ROOT, image_path)
         directory = pjoin(settings.MEDIA_ROOT, self._upload_to)

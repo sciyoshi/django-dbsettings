@@ -1,8 +1,8 @@
-from django.conf.urls import patterns, include
+from django.conf.urls import include, url
 from django.contrib import admin
 
-urlpatterns = patterns(
-    '',
-    (r'^admin/', include(admin.site.urls)),
-    (r'^settings/', include('dbsettings.urls')),
-)
+
+urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^settings/', include('dbsettings.urls')),
+]

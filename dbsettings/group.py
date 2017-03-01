@@ -3,6 +3,7 @@ from django.utils import six
 
 from dbsettings.values import Value
 from dbsettings.loading import register_setting, unregister_setting
+from dbsettings.management import mk_permissions
 
 __all__ = ['Group']
 
@@ -89,6 +90,9 @@ class Group(object):
             except AttributeError:
                 # Permissions were supplied as a tuple, so preserve that
                 cls._meta.permissions = tuple(cls._meta.permissions + (permission,))
+        # Django migrations runner cache properties
+        if hasattr(cls._meta, 'original_attrs'):
+            cls._meta.original_attrs['permissions'] = cls._meta.permissions
 
         # Finally, place the attribute on the class
         setattr(cls, name, GroupDescriptor(self, name))

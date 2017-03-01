@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 
-from dbsettings.settings import USE_SITES
+from dbsettings.settings import USE_SITES, VALUE_LENGTH
 
 
 class Migration(migrations.Migration):
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('module_name', models.CharField(max_length=255)),
                 ('class_name', models.CharField(max_length=255, blank=True)),
                 ('attribute_name', models.CharField(max_length=255)),
-                ('value', models.CharField(max_length=255, blank=True)),
+                ('value', models.CharField(max_length=VALUE_LENGTH, blank=True)),
             ] + ([('site', models.ForeignKey(to='sites.Site'))] if USE_SITES else [])
         ),
     ]
